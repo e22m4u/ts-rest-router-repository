@@ -12,7 +12,7 @@
   "homepage": "https://github.com/e22m4u/js-repository-rest-router",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/e22m4u/js-repository-rest-router"
+    "url": "git+https://github.com/e22m4u/js-repository-rest-router.git"
   },
   "type": "module",
   "types": "./dist/esm/index.d.ts",
