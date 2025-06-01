@@ -1197,22 +1197,11 @@ var require_Reflect = __commonJS({
 // dist/esm/index.js
 var index_exports = {};
 __export(index_exports, {
-  requestBodyWithModel: () => requestBodyWithModel
+  requestBodyWithModel: () => requestBodyWithModel,
+  responseBodyWithModel: () => responseBodyWithModel
 });
 module.exports = __toCommonJS(index_exports);
 __reExport(index_exports, require("@e22m4u/js-repository-data-schema"), module.exports);
-
-// dist/esm/decorators/request-body-with-model.js
-var import_js_format2 = require("@e22m4u/js-format");
-
-// dist/esm/utils/is-class.js
-function isClass(value) {
-  if (typeof value !== "function")
-    return false;
-  const stringified = value.toString();
-  return stringified.startsWith("class");
-}
-__name(isClass, "isClass");
 
 // dist/esm/decorators/request-body-with-model.js
 var import_ts_data_schema = require("@e22m4u/ts-data-schema");
@@ -1301,37 +1290,67 @@ var PROJECTION_RULE_CLASS_METADATA_KEY = new MetadataKey("dataProjectionRuleClas
 var PROJECTION_RULE_PROPERTY_METADATA_KEY = new MetadataKey("dataProjectionRulePropertyMetadataKey");
 var PROJECTION_EMBEDDING_PROPERTY_METADATA_KEY = new MetadataKey("dataProjectionEmbeddingPropertyMetadataKey");
 
+// dist/esm/decorators/utils/extract-model-class-from-decorator-input.js
+var import_js_format2 = require("@e22m4u/js-format");
+
+// dist/esm/utils/is-class.js
+function isClass(value) {
+  if (typeof value !== "function")
+    return false;
+  const stringified = value.toString();
+  return stringified.startsWith("class");
+}
+__name(isClass, "isClass");
+
+// dist/esm/decorators/utils/extract-model-class-from-decorator-input.js
+function extractModelClassFromDecoratorInput(decoratorName, modelInput) {
+  if (typeof modelInput === "function" && !isClass(modelInput)) {
+    modelInput = modelInput();
+  }
+  let modelClass;
+  let isArray = false;
+  if (Array.isArray(modelInput)) {
+    isArray = true;
+    if (modelInput.length !== 1) {
+      throw new import_js_format2.Errorf("If an array (or a factory returning an array) is passed to @%s, it must contain exactly one model class, but %v items given.", decoratorName, modelInput.length);
+    }
+    modelClass = modelInput[0];
+  } else {
+    modelClass = modelInput;
+  }
+  if (!isClass(modelClass))
+    throw new import_js_format2.Errorf("The first argument of @%s must be a model class, an array containing a single model class, or a factory function of these values.", decoratorName);
+  return { modelClass, isArray };
+}
+__name(extractModelClassFromDecoratorInput, "extractModelClassFromDecoratorInput");
+
 // dist/esm/decorators/request-body-with-model.js
 var import_js_repository_data_schema = require("@e22m4u/js-repository-data-schema");
 function requestBodyWithModel(model) {
-  if (typeof model === "function" && !isClass(model)) {
-    model = model();
-  }
-  let isArray = false;
-  let modelOrFactory;
-  if (Array.isArray(model)) {
-    isArray = true;
-    modelOrFactory = model[0];
-  } else {
-    modelOrFactory = model;
-  }
-  let modelClass;
-  if (typeof modelOrFactory === "function" && !isClass(modelOrFactory)) {
-    modelClass = modelOrFactory();
-  } else if (isClass(modelOrFactory)) {
-    modelClass = modelOrFactory;
-  }
-  if (!isClass(modelClass))
-    throw new import_js_format2.Errorf("The first argument of @requestBodyWithModel must be a model class, an array (containing a model class or a model factory), or a factory function (returning either a model class or an array containing a model class).");
-  const modelSchema = (0, import_js_repository_data_schema.getDataSchemaByModelClass)(modelClass, ProjectionScope.INPUT);
+  const { modelClass, isArray } = extractModelClassFromDecoratorInput(requestBodyWithModel.name, model);
+  const dataSchema = (0, import_js_repository_data_schema.getDataSchemaByModelClass)(modelClass, ProjectionScope.INPUT);
   if (isArray)
-    return (0, import_ts_rest_router.requestBody)({ type: import_ts_data_schema.DataType.ARRAY, items: modelSchema });
-  return (0, import_ts_rest_router.requestBody)(modelSchema);
+    return (0, import_ts_rest_router.requestBody)({ type: import_ts_data_schema.DataType.ARRAY, items: dataSchema });
+  return (0, import_ts_rest_router.requestBody)(dataSchema);
 }
 __name(requestBodyWithModel, "requestBodyWithModel");
+
+// dist/esm/decorators/response-body-with-model.js
+var import_ts_data_schema2 = require("@e22m4u/ts-data-schema");
+var import_ts_rest_router2 = require("@e22m4u/ts-rest-router");
+var import_js_repository_data_schema2 = require("@e22m4u/js-repository-data-schema");
+function responseBodyWithModel(model) {
+  const { modelClass, isArray } = extractModelClassFromDecoratorInput(responseBodyWithModel.name, model);
+  const dataSchema = (0, import_js_repository_data_schema2.getDataSchemaByModelClass)(modelClass, ProjectionScope.OUTPUT);
+  if (isArray)
+    return (0, import_ts_rest_router2.responseBody)({ type: import_ts_data_schema2.DataType.ARRAY, items: dataSchema });
+  return (0, import_ts_rest_router2.responseBody)(dataSchema);
+}
+__name(responseBodyWithModel, "responseBodyWithModel");
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   requestBodyWithModel,
+  responseBodyWithModel,
   ...require("@e22m4u/js-repository-data-schema")
 });
 /*! Bundled license information:
