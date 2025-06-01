@@ -8,7 +8,7 @@ class AnotherModel {}
 describe('extractModelClassFromDecoratorInput', function () {
   const decoratorName = 'testDecorator';
 
-  describe('Valid Inputs', function () {
+  describe('valid inputs', function () {
     it('should extract model class directly', function () {
       const result = extractModelClassFromDecoratorInput(
         decoratorName,
@@ -47,7 +47,7 @@ describe('extractModelClassFromDecoratorInput', function () {
     });
   });
 
-  describe('Invalid Inputs - Array format issues', function () {
+  describe('invalid inputs - array format issues', function () {
     it('should throw Error if array is empty', function () {
       expect(() =>
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -86,7 +86,7 @@ describe('extractModelClassFromDecoratorInput', function () {
     });
   });
 
-  describe('Invalid Inputs - Not a class', function () {
+  describe('invalid inputs - not a class', function () {
     it('should throw Error if input is not a class', function () {
       const notAModel = {};
       expect(() =>
