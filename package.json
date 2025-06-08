@@ -39,8 +39,8 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@e22m4u/js-repository-data-schema": "~0.1.0",
-    "@e22m4u/ts-data-schema": "~0.2.0"
+    "@e22m4u/js-repository-data-schema": "~0.1.1",
+    "@e22m4u/ts-data-schema": "~0.2.2"
   },
   "peerDependencies": {
     "@e22m4u/js-format": "~0.1.0",
