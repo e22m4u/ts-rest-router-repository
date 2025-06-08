@@ -1,6 +1,6 @@
 {
   "name": "@e22m4u/js-repository-rest-router",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Декораторы REST-маршрутизатора для использования моделей в данных запроса",
   "author": "e22m4u <e22m4u@yandex.ru>",
   "license": "MIT",
