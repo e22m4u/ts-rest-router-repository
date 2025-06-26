@@ -3,7 +3,7 @@ import {DataType} from '@e22m4u/ts-data-schema';
 import {responseBody} from '@e22m4u/ts-rest-router';
 import {ProjectionScope} from '@e22m4u/ts-projection';
 import {extractModelClassFromDecoratorInput} from './utils/index.js';
-import {getDataSchemaByModelClass} from '@e22m4u/js-repository-data-schema';
+import {RouterRepositoryContext} from '../router-repository-context.js';
 
 /**
  * Декоратор-обертка для @responseBody, который позволяет передавать
@@ -28,7 +28,9 @@ export function responseBodyWithModel<T extends object>(
     responseBodyWithModel.name,
     model,
   );
-  const dataSchema = getDataSchemaByModelClass(
+  const rrc = RouterRepositoryContext.getGlobalInstance();
+  const rds = rrc.getRepositoryDataSchemaService();
+  const dataSchema = rds.getDataSchemaByModelClass(
     modelClass,
     ProjectionScope.OUTPUT,
   );

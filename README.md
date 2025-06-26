@@ -1,13 +1,11 @@
-# @e22m4u/js-repository-rest-router
+# @e22m4u/ts-rest-router-repository
 
-Модуль экспортирует содержимое пакета [@e22m4u/js-repository-data-schema](https://www.npmjs.com/package/@e22m4u/js-repository-data-schema)
-и дополнительные декораторы REST-маршрутизатора, позволяющие использовать модели
-базы данных (TypeScript классы) для описания принимаемых и возвращаемых данных
-запроса.
+Модуль экспортирует декораторы REST-маршрутизатора, позволяющие использовать
+модели базы данных (TypeScript классы) для описания принимаемых и возвращаемых
+данных запроса.
 
 REST-маршрутизатор [@e22m4u/ts-rest-router](https://www.npmjs.com/package/@e22m4u/ts-rest-router)  
-Определение модели [@e22m4u/js-repository](https://www.npmjs.com/package/@e22m4u/js-repository#%D0%BC%D0%BE%D0%B4%D0%B5%D0%BB%D1%8C)  
-Модель (TypeScript класс) [@e22m4u/js-repository-decorators](https://www.npmjs.com/package/@e22m4u/js-repository-decorators#%D0%9F%D1%80%D0%B8%D0%BC%D0%B5%D1%80)  
+Определение модели [@e22m4u/js-repository-decorators](https://www.npmjs.com/package/@e22m4u/js-repository-decorators#%D0%9F%D1%80%D0%B8%D0%BC%D0%B5%D1%80)  
 
 ## Содержание
 
@@ -23,7 +21,7 @@ REST-маршрутизатор [@e22m4u/ts-rest-router](https://www.npmjs.com/p
 ## Установка
 
 ```bash
-npm install @e22m4u/js-repository-rest-router
+npm install @e22m4u/ts-rest-router-repository
 ```
 
 #### Поддержка декораторов
@@ -40,16 +38,17 @@ npm install @e22m4u/js-repository-rest-router
 
 ## Начальная настройка
 
-Прежде чем использовать декораторы, требуется выполнить инъекцию схемы
-репозиториев `Schema` в глобальный экземпляр сервиса `RepositoryDataSchema`
-как это показано ниже.
+Прежде чем использовать декораторы, требуется создать экземпляр класса
+`RouterRepositoryContext` и выполнить инъекцию сервиса `DatabaseSchema`
+(схема базы данных) в данный экземпляр, как это показано ниже.
 
 ```ts
-import {Schema} from '@e22m4u/js-repository';
-import {repositoryDataSchema} from '@e22m4u/js-repository-rest-router';
+import {DatabaseSchema} from '@e22m4u/js-repository';
+import {RouterRepositoryContext} from '@e22m4u/ts-rest-router-repository';
 
-const schema = new Schema();
-repositoryDataSchema.setService(Schema, schema);
+const dbs = new DatabaseSchema();
+const rrc = new RouterRepositoryContext();
+rrc.setService(DatabaseSchema, dbs);
 ```
 
 В примерах декораторов используется модель `City`, определение данной модели
@@ -62,7 +61,6 @@ import {property} from '@e22m4u/js-repository-decorators';
 import {getModelDefinitionFromClass} from '@e22m4u/js-repository-decorators';
 
 // определение модели City с помощью декораторов
-// (см. README.md пакета @e22m4u/js-repository-decorators)
 @model()
 class City {
   @property(DataType.STRING)
@@ -75,9 +73,9 @@ class City {
   codes!: number[];
 }
 
-// регистрация модели City в схеме репозиториев
-// (см. README.md пакета @e22m4u/js-repository-decorators)
-schema.defineModel(getModelDefinitionFromClass(City));
+// регистрация модели City в схеме базы данных
+// (переменная `dbs` является экземпляром DatabaseSchema)
+dbs.defineModel(getModelDefinitionFromClass(City));
 ```
 
 ## Декораторы
@@ -112,13 +110,12 @@ function requestBodyWithModel<T extends object>(
 Пример:
 
 ```ts
-import {requestBodyWithModel} from '@e22m4u/js-repository-rest-router';
+import {requestBodyWithModel} from '@e22m4u/ts-rest-router-repository';
 // peerDependencies
 import {postAction} from '@e22m4u/ts-rest-router';
 import {restController} from '@e22m4u/ts-rest-router';
 
-// определение контроллера CityController
-// (см. README.md пакета @e22m4u/ts-rest-router)
+// определение контроллера
 @restController('cities')
 class CityController {
   // объявление метода POST /cities
@@ -163,13 +160,12 @@ function responseBodyWithModel<T extends object>(
 Пример:
 
 ```ts
-import {responseBodyWithModel} from '@e22m4u/js-repository-rest-router';
+import {responseBodyWithModel} from '@e22m4u/ts-rest-router-repository';
 // peerDependencies
 import {postAction} from '@e22m4u/ts-rest-router';
 import {restController} from '@e22m4u/ts-rest-router';
 
-// определение контроллера CityController
-// (см. README.md пакета @e22m4u/ts-rest-router)
+// определение контроллера
 @restController('cities')
 class CityController {
   // объявление метода POST /cities

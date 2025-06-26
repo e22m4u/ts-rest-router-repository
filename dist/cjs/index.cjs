@@ -5,6 +5,7 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
@@ -31,6 +32,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 // node_modules/reflect-metadata/Reflect.js
 var require_Reflect = __commonJS({
@@ -1197,11 +1199,11 @@ var require_Reflect = __commonJS({
 // dist/esm/index.js
 var index_exports = {};
 __export(index_exports, {
+  RouterRepositoryContext: () => RouterRepositoryContext,
   requestBodyWithModel: () => requestBodyWithModel,
   responseBodyWithModel: () => responseBodyWithModel
 });
 module.exports = __toCommonJS(index_exports);
-__reExport(index_exports, require("@e22m4u/js-repository-data-schema"), module.exports);
 
 // dist/esm/decorators/request-body-with-model.js
 var import_ts_data_schema = require("@e22m4u/ts-data-schema");
@@ -1324,11 +1326,296 @@ function extractModelClassFromDecoratorInput(decoratorName, modelInput) {
 }
 __name(extractModelClassFromDecoratorInput, "extractModelClassFromDecoratorInput");
 
-// dist/esm/decorators/request-body-with-model.js
+// dist/esm/router-repository-context.js
+var import_js_format4 = require("@e22m4u/js-format");
+
+// node_modules/@e22m4u/js-service/src/errors/invalid-argument-error.js
+var import_js_format3 = require("@e22m4u/js-format");
+var _InvalidArgumentError = class _InvalidArgumentError extends import_js_format3.Errorf {
+};
+__name(_InvalidArgumentError, "InvalidArgumentError");
+var InvalidArgumentError = _InvalidArgumentError;
+
+// node_modules/@e22m4u/js-service/src/service-container.js
+var _ServiceContainer = class _ServiceContainer {
+  /**
+   * Services map.
+   *
+   * @type {Map<any, any>}
+   * @private
+   */
+  _services = /* @__PURE__ */ new Map();
+  /**
+   * Parent container.
+   *
+   * @type {ServiceContainer}
+   * @private
+   */
+  _parent;
+  /**
+   * Constructor.
+   *
+   * @param {ServiceContainer|undefined} parent
+   */
+  constructor(parent = void 0) {
+    if (parent != null) {
+      if (!(parent instanceof _ServiceContainer))
+        throw new InvalidArgumentError(
+          'The provided parameter "parent" of ServicesContainer.constructor must be an instance ServiceContainer, but %v given.',
+          parent
+        );
+      this._parent = parent;
+    }
+  }
+  /**
+   * Получить существующий или новый экземпляр.
+   *
+   * @param {*} ctor
+   * @param {*} args
+   * @return {*}
+   */
+  get(ctor, ...args) {
+    if (!ctor || typeof ctor !== "function")
+      throw new InvalidArgumentError(
+        "The first argument of ServicesContainer.get must be a class constructor, but %v given.",
+        ctor
+      );
+    if (!this._services.has(ctor) && this._parent && this._parent.has(ctor)) {
+      return this._parent.get(ctor);
+    }
+    let service = this._services.get(ctor);
+    if (!service || args.length) {
+      service = Array.isArray(ctor.kinds) && ctor.kinds.includes(SERVICE_CLASS_NAME) ? new ctor(this, ...args) : new ctor(...args);
+      this._services.set(ctor, service);
+    } else if (typeof service === "function") {
+      service = service();
+      this._services.set(ctor, service);
+    }
+    return service;
+  }
+  /**
+   * Проверка существования конструктора в контейнере.
+   *
+   * @param {*} ctor
+   * @return {boolean}
+   */
+  has(ctor) {
+    if (this._services.has(ctor)) return true;
+    if (this._parent) return this._parent.has(ctor);
+    return false;
+  }
+  /**
+   * Добавить конструктор в контейнер.
+   *
+   * @param {*} ctor
+   * @param {*} args
+   * @return {this}
+   */
+  add(ctor, ...args) {
+    if (!ctor || typeof ctor !== "function")
+      throw new InvalidArgumentError(
+        "The first argument of ServicesContainer.add must be a class constructor, but %v given.",
+        ctor
+      );
+    const factory = /* @__PURE__ */ __name(() => Array.isArray(ctor.kinds) && ctor.kinds.includes(SERVICE_CLASS_NAME) ? new ctor(this, ...args) : new ctor(...args), "factory");
+    this._services.set(ctor, factory);
+    return this;
+  }
+  /**
+   * Добавить конструктор и создать экземпляр.
+   *
+   * @param {*} ctor
+   * @param {*} args
+   * @return {this}
+   */
+  use(ctor, ...args) {
+    if (!ctor || typeof ctor !== "function")
+      throw new InvalidArgumentError(
+        "The first argument of ServicesContainer.use must be a class constructor, but %v given.",
+        ctor
+      );
+    const service = Array.isArray(ctor.kinds) && ctor.kinds.includes(SERVICE_CLASS_NAME) ? new ctor(this, ...args) : new ctor(...args);
+    this._services.set(ctor, service);
+    return this;
+  }
+  /**
+   * Добавить конструктор и связанный экземпляр.
+   *
+   * @param {*} ctor
+   * @param {*} service
+   * @return {this}
+   */
+  set(ctor, service) {
+    if (!ctor || typeof ctor !== "function")
+      throw new InvalidArgumentError(
+        "The first argument of ServicesContainer.set must be a class constructor, but %v given.",
+        ctor
+      );
+    if (!service || typeof service !== "object" || Array.isArray(service))
+      throw new InvalidArgumentError(
+        "The second argument of ServicesContainer.set must be an Object, but %v given.",
+        service
+      );
+    this._services.set(ctor, service);
+    return this;
+  }
+};
+__name(_ServiceContainer, "ServiceContainer");
+var ServiceContainer = _ServiceContainer;
+
+// node_modules/@e22m4u/js-service/src/service.js
+var SERVICE_CLASS_NAME = "Service";
+var _Service = class _Service {
+  /**
+   * Container.
+   *
+   * @type {ServiceContainer}
+   */
+  container;
+  /**
+   * Constructor.
+   *
+   * @param {ServiceContainer|undefined} container
+   */
+  constructor(container = void 0) {
+    this.container = container instanceof ServiceContainer ? container : new ServiceContainer();
+  }
+  /**
+   * Получить существующий или новый экземпляр.
+   *
+   * @param {*} ctor
+   * @param {*} args
+   * @return {*}
+   */
+  getService(ctor, ...args) {
+    return this.container.get(ctor, ...args);
+  }
+  /**
+   * Проверка существования конструктора в контейнере.
+   *
+   * @param {*} ctor
+   * @return {boolean}
+   */
+  hasService(ctor) {
+    return this.container.has(ctor);
+  }
+  /**
+   * Добавить конструктор в контейнер.
+   *
+   * @param {*} ctor
+   * @param {*} args
+   * @return {this}
+   */
+  addService(ctor, ...args) {
+    this.container.add(ctor, ...args);
+    return this;
+  }
+  /**
+   * Добавить конструктор и создать экземпляр.
+   *
+   * @param {*} ctor
+   * @param {*} args
+   * @return {this}
+   */
+  useService(ctor, ...args) {
+    this.container.use(ctor, ...args);
+    return this;
+  }
+  /**
+   * Добавить конструктор и связанный экземпляр.
+   *
+   * @param {*} ctor
+   * @param {*} service
+   * @return {this}
+   */
+  setService(ctor, service) {
+    this.container.set(ctor, service);
+    return this;
+  }
+};
+__name(_Service, "Service");
+/**
+ * Kinds.
+ *
+ * @type {string[]}
+ */
+__publicField(_Service, "kinds", [SERVICE_CLASS_NAME]);
+var Service = _Service;
+
+// dist/esm/router-repository-context.js
+var import_js_repository = require("@e22m4u/js-repository");
 var import_js_repository_data_schema = require("@e22m4u/js-repository-data-schema");
+var _RouterRepositoryContext = class _RouterRepositoryContext extends Service {
+  /**
+   * Constructor.
+   *
+   * @param container
+   */
+  constructor(container) {
+    super(container);
+    if (!_RouterRepositoryContext.globalInstance)
+      _RouterRepositoryContext.setGlobalInstance(this);
+  }
+  /**
+   * Set global instance.
+   *
+   * @param inst
+   */
+  static setGlobalInstance(inst) {
+    this.globalInstance = inst;
+  }
+  /**
+   * Has global instance.
+   */
+  static hasGlobalInstance() {
+    return this.globalInstance != null;
+  }
+  /**
+   * Get global instance.
+   */
+  static getGlobalInstance() {
+    if (this.globalInstance)
+      return this.globalInstance;
+    throw new import_js_format4.Errorf("The RouterRepositoryContext class has no registered global instance.");
+  }
+  /**
+   * Remove global instance.
+   */
+  static removeGlobalInstance() {
+    _RouterRepositoryContext.globalInstance = void 0;
+  }
+  /**
+   * Возвращает существующий экземпляр сервиса RepositoryDataSchema,
+   * или создает новый (требует сервис схемы базы данных).
+   */
+  getRepositoryDataSchemaService() {
+    const hasRds = this.hasService(import_js_repository_data_schema.RepositoryDataSchema);
+    if (!hasRds) {
+      const hasDbs = this.hasService(import_js_repository.DatabaseSchema);
+      if (!hasDbs)
+        throw new import_js_format4.Errorf("A DatabaseSchema instance must be registered in the RouterRepositoryContext service.");
+      const rds = new import_js_repository_data_schema.RepositoryDataSchema();
+      const dbs = this.getService(import_js_repository.DatabaseSchema);
+      rds.setService(import_js_repository.DatabaseSchema, dbs);
+      this.setService(import_js_repository_data_schema.RepositoryDataSchema, rds);
+    }
+    return this.getService(import_js_repository_data_schema.RepositoryDataSchema);
+  }
+};
+__name(_RouterRepositoryContext, "RouterRepositoryContext");
+/**
+ * Глобальный экземпляр текущего сервиса.
+ * (используется декораторами)
+ */
+__publicField(_RouterRepositoryContext, "globalInstance");
+var RouterRepositoryContext = _RouterRepositoryContext;
+
+// dist/esm/decorators/request-body-with-model.js
 function requestBodyWithModel(model) {
   const { modelClass, isArray } = extractModelClassFromDecoratorInput(requestBodyWithModel.name, model);
-  const dataSchema = (0, import_js_repository_data_schema.getDataSchemaByModelClass)(modelClass, ProjectionScope.INPUT);
+  const rrc = RouterRepositoryContext.getGlobalInstance();
+  const rds = rrc.getRepositoryDataSchemaService();
+  const dataSchema = rds.getDataSchemaByModelClass(modelClass, ProjectionScope.INPUT);
   if (isArray)
     return (0, import_ts_rest_router.requestBody)({ type: import_ts_data_schema.DataType.ARRAY, items: dataSchema });
   return (0, import_ts_rest_router.requestBody)(dataSchema);
@@ -1338,17 +1625,22 @@ __name(requestBodyWithModel, "requestBodyWithModel");
 // dist/esm/decorators/response-body-with-model.js
 var import_ts_data_schema2 = require("@e22m4u/ts-data-schema");
 var import_ts_rest_router2 = require("@e22m4u/ts-rest-router");
-var import_js_repository_data_schema2 = require("@e22m4u/js-repository-data-schema");
 function responseBodyWithModel(model) {
   const { modelClass, isArray } = extractModelClassFromDecoratorInput(responseBodyWithModel.name, model);
-  const dataSchema = (0, import_js_repository_data_schema2.getDataSchemaByModelClass)(modelClass, ProjectionScope.OUTPUT);
+  const rrc = RouterRepositoryContext.getGlobalInstance();
+  const rds = rrc.getRepositoryDataSchemaService();
+  const dataSchema = rds.getDataSchemaByModelClass(modelClass, ProjectionScope.OUTPUT);
   if (isArray)
     return (0, import_ts_rest_router2.responseBody)({ type: import_ts_data_schema2.DataType.ARRAY, items: dataSchema });
   return (0, import_ts_rest_router2.responseBody)(dataSchema);
 }
 __name(responseBodyWithModel, "responseBodyWithModel");
+
+// dist/esm/index.js
+__reExport(index_exports, require("@e22m4u/js-repository-data-schema"), module.exports);
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
+  RouterRepositoryContext,
   requestBodyWithModel,
   responseBodyWithModel,
   ...require("@e22m4u/js-repository-data-schema")
