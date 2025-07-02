@@ -1384,6 +1384,14 @@ var _ServiceContainer = class _ServiceContainer {
       return this._parent.get(ctor);
     }
     let service = this._services.get(ctor);
+    if (!service) {
+      const ctors = this._services.keys();
+      const inheritedCtor = ctors.find((v) => v.prototype instanceof ctor);
+      if (inheritedCtor) {
+        service = this._services.get(inheritedCtor);
+        ctor = inheritedCtor;
+      }
+    }
     if (!service || args.length) {
       service = Array.isArray(ctor.kinds) && ctor.kinds.includes(SERVICE_CLASS_NAME) ? new ctor(this, ...args) : new ctor(...args);
       this._services.set(ctor, service);
@@ -1402,6 +1410,9 @@ var _ServiceContainer = class _ServiceContainer {
   has(ctor) {
     if (this._services.has(ctor)) return true;
     if (this._parent) return this._parent.has(ctor);
+    const ctors = this._services.keys();
+    const inheritedCtor = ctors.find((v) => v.prototype instanceof ctor);
+    if (inheritedCtor) return true;
     return false;
   }
   /**
