@@ -1,6 +1,5 @@
 import {Errorf} from '@e22m4u/js-format';
 import {Service} from '@e22m4u/js-service';
-import {ServiceContainer} from '@e22m4u/js-service';
 import {DatabaseSchema} from '@e22m4u/js-repository';
 import {RepositoryDataSchema} from '@e22m4u/js-repository-data-schema';
 
@@ -16,11 +15,9 @@ export class RouterRepositoryContext extends Service {
 
   /**
    * Constructor.
-   *
-   * @param container
    */
-  constructor(container?: ServiceContainer) {
-    super(container);
+  constructor() {
+    super();
     if (!RouterRepositoryContext.globalInstance)
       RouterRepositoryContext.setGlobalInstance(this);
   }

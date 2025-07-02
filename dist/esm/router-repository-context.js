@@ -13,11 +13,9 @@ export class RouterRepositoryContext extends Service {
     static globalInstance;
     /**
      * Constructor.
-     *
-     * @param container
      */
-    constructor(container) {
-        super(container);
+    constructor() {
+        super();
         if (!RouterRepositoryContext.globalInstance)
             RouterRepositoryContext.setGlobalInstance(this);
     }

@@ -1548,11 +1548,9 @@ var import_js_repository_data_schema = require("@e22m4u/js-repository-data-schem
 var _RouterRepositoryContext = class _RouterRepositoryContext extends Service {
   /**
    * Constructor.
-   *
-   * @param container
    */
-  constructor(container) {
-    super(container);
+  constructor() {
+    super();
     if (!_RouterRepositoryContext.globalInstance)
       _RouterRepositoryContext.setGlobalInstance(this);
   }

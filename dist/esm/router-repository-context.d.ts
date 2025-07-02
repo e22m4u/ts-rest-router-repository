@@ -1,5 +1,4 @@
 import { Service } from '@e22m4u/js-service';
-import { ServiceContainer } from '@e22m4u/js-service';
 import { RepositoryDataSchema } from '@e22m4u/js-repository-data-schema';
 /**
  * Router repository context.
@@ -12,10 +11,8 @@ export declare class RouterRepositoryContext extends Service {
     protected static globalInstance: RouterRepositoryContext | undefined;
     /**
      * Constructor.
-     *
-     * @param container
      */
-    constructor(container?: ServiceContainer);
+    constructor();
     /**
      * Set global instance.
      *
