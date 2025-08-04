@@ -1210,7 +1210,16 @@ var import_ts_data_schema = require("@e22m4u/ts-data-schema");
 var import_ts_rest_router = require("@e22m4u/ts-rest-router");
 
 // node_modules/@e22m4u/ts-projection/dist/esm/projection.js
-var import_js_format = require("@e22m4u/js-format");
+var ProjectionScope;
+(function(ProjectionScope2) {
+  ProjectionScope2["INPUT"] = "input";
+  ProjectionScope2["OUTPUT"] = "output";
+})(ProjectionScope || (ProjectionScope = {}));
+var ProjectionRule;
+(function(ProjectionRule2) {
+  ProjectionRule2["HIDE"] = "hide";
+  ProjectionRule2["SHOW"] = "show";
+})(ProjectionRule || (ProjectionRule = {}));
 
 // node_modules/@e22m4u/ts-reflector/dist/esm/reflector.js
 var import_reflect_metadata = __toESM(require_Reflect(), 1);
@@ -1277,23 +1286,15 @@ var _MetadataKey = class _MetadataKey {
 __name(_MetadataKey, "MetadataKey");
 var MetadataKey = _MetadataKey;
 
-// node_modules/@e22m4u/ts-projection/dist/esm/projection.js
-var ProjectionScope;
-(function(ProjectionScope2) {
-  ProjectionScope2["INPUT"] = "input";
-  ProjectionScope2["OUTPUT"] = "output";
-})(ProjectionScope || (ProjectionScope = {}));
-var ProjectionRule;
-(function(ProjectionRule2) {
-  ProjectionRule2["HIDE"] = "hide";
-  ProjectionRule2["SHOW"] = "show";
-})(ProjectionRule || (ProjectionRule = {}));
-var PROJECTION_RULE_CLASS_METADATA_KEY = new MetadataKey("dataProjectionRuleClassMetadataKey");
-var PROJECTION_RULE_PROPERTY_METADATA_KEY = new MetadataKey("dataProjectionRulePropertyMetadataKey");
-var PROJECTION_EMBEDDING_PROPERTY_METADATA_KEY = new MetadataKey("dataProjectionEmbeddingPropertyMetadataKey");
+// node_modules/@e22m4u/ts-projection/dist/esm/decorators/projection-rule/projection-rule-metadata.js
+var PROJECTION_RULE_CLASS_METADATA_KEY = new MetadataKey("projectionRuleClassMetadataKey");
+var PROJECTION_RULE_PROPERTY_METADATA_KEY = new MetadataKey("projectionRulePropertyMetadataKey");
+
+// node_modules/@e22m4u/ts-projection/dist/esm/decorators/embedded-projection/embedded-projection-metadata.js
+var EMBEDDED_PROJECTION_PROPERTY_METADATA_KEY = new MetadataKey("embeddedProjectionPropertyMetadataKey");
 
 // dist/esm/decorators/utils/extract-model-class-from-decorator-input.js
-var import_js_format2 = require("@e22m4u/js-format");
+var import_js_format = require("@e22m4u/js-format");
 
 // dist/esm/utils/is-class.js
 function isClass(value) {
@@ -1314,24 +1315,24 @@ function extractModelClassFromDecoratorInput(decoratorName, modelInput) {
   if (Array.isArray(modelInput)) {
     isArray = true;
     if (modelInput.length !== 1) {
-      throw new import_js_format2.Errorf("If an array (or a factory returning an array) is passed to @%s, it must contain exactly one model class, but %v items given.", decoratorName, modelInput.length);
+      throw new import_js_format.Errorf("If an array (or a factory returning an array) is passed to @%s, it must contain exactly one model class, but %v items given.", decoratorName, modelInput.length);
     }
     modelClass = modelInput[0];
   } else {
     modelClass = modelInput;
   }
   if (!isClass(modelClass))
-    throw new import_js_format2.Errorf("The first argument of @%s must be a model class, an array containing a single model class, or a factory function of these values.", decoratorName);
+    throw new import_js_format.Errorf("The first argument of @%s must be a model class, an array containing a single model class, or a factory function of these values.", decoratorName);
   return { modelClass, isArray };
 }
 __name(extractModelClassFromDecoratorInput, "extractModelClassFromDecoratorInput");
 
 // dist/esm/router-repository-context.js
-var import_js_format4 = require("@e22m4u/js-format");
+var import_js_format3 = require("@e22m4u/js-format");
 
 // node_modules/@e22m4u/js-service/src/errors/invalid-argument-error.js
-var import_js_format3 = require("@e22m4u/js-format");
-var _InvalidArgumentError = class _InvalidArgumentError extends import_js_format3.Errorf {
+var import_js_format2 = require("@e22m4u/js-format");
+var _InvalidArgumentError = class _InvalidArgumentError extends import_js_format2.Errorf {
 };
 __name(_InvalidArgumentError, "InvalidArgumentError");
 var InvalidArgumentError = _InvalidArgumentError;
@@ -1369,11 +1370,29 @@ var _ServiceContainer = class _ServiceContainer {
     }
   }
   /**
+   * Получить родительский сервис-контейнер или выбросить ошибку.
+   *
+   * @returns {ServiceContainer}
+   */
+  getParent() {
+    if (!this._parent)
+      throw new InvalidArgumentError("The service container has no parent.");
+    return this._parent;
+  }
+  /**
+   * Проверить наличие родительского сервис-контейнера.
+   *
+   * @returns {boolean}
+   */
+  hasParent() {
+    return Boolean(this._parent);
+  }
+  /**
    * Получить существующий или новый экземпляр.
    *
    * @param {*} ctor
    * @param {*} args
-   * @return {*}
+   * @returns {*}
    */
   get(ctor, ...args) {
     if (!ctor || typeof ctor !== "function")
@@ -1403,10 +1422,10 @@ var _ServiceContainer = class _ServiceContainer {
     return service;
   }
   /**
-   * Проверка существования конструктора в контейнере.
+   * Проверить существование конструктора в контейнере.
    *
    * @param {*} ctor
-   * @return {boolean}
+   * @returns {boolean}
    */
   has(ctor) {
     if (this._services.has(ctor)) return true;
@@ -1421,7 +1440,7 @@ var _ServiceContainer = class _ServiceContainer {
    *
    * @param {*} ctor
    * @param {*} args
-   * @return {this}
+   * @returns {this}
    */
   add(ctor, ...args) {
     if (!ctor || typeof ctor !== "function")
@@ -1438,7 +1457,7 @@ var _ServiceContainer = class _ServiceContainer {
    *
    * @param {*} ctor
    * @param {*} args
-   * @return {this}
+   * @returns {this}
    */
   use(ctor, ...args) {
     if (!ctor || typeof ctor !== "function")
@@ -1455,7 +1474,7 @@ var _ServiceContainer = class _ServiceContainer {
    *
    * @param {*} ctor
    * @param {*} service
-   * @return {this}
+   * @returns {this}
    */
   set(ctor, service) {
     if (!ctor || typeof ctor !== "function")
@@ -1511,7 +1530,7 @@ var _Service = class _Service {
    *
    * @param {*} ctor
    * @param {*} args
-   * @return {*}
+   * @returns {*}
    */
   getService(ctor, ...args) {
     return this.container.get(ctor, ...args);
@@ -1520,7 +1539,7 @@ var _Service = class _Service {
    * Проверка существования конструктора в контейнере.
    *
    * @param {*} ctor
-   * @return {boolean}
+   * @returns {boolean}
    */
   hasService(ctor) {
     return this.container.has(ctor);
@@ -1530,7 +1549,7 @@ var _Service = class _Service {
    *
    * @param {*} ctor
    * @param {*} args
-   * @return {this}
+   * @returns {this}
    */
   addService(ctor, ...args) {
     this.container.add(ctor, ...args);
@@ -1541,7 +1560,7 @@ var _Service = class _Service {
    *
    * @param {*} ctor
    * @param {*} args
-   * @return {this}
+   * @returns {this}
    */
   useService(ctor, ...args) {
     this.container.use(ctor, ...args);
@@ -1552,7 +1571,7 @@ var _Service = class _Service {
    *
    * @param {*} ctor
    * @param {*} service
-   * @return {this}
+   * @returns {this}
    */
   setService(ctor, service) {
     this.container.set(ctor, service);
@@ -1600,7 +1619,7 @@ var _RouterRepositoryContext = class _RouterRepositoryContext extends Service {
   static getGlobalInstance() {
     if (this.globalInstance)
       return this.globalInstance;
-    throw new import_js_format4.Errorf("The RouterRepositoryContext class has no registered global instance.");
+    throw new import_js_format3.Errorf("The RouterRepositoryContext class has no registered global instance.");
   }
   /**
    * Remove global instance.
@@ -1617,7 +1636,7 @@ var _RouterRepositoryContext = class _RouterRepositoryContext extends Service {
     if (!hasRds) {
       const hasDbs = this.hasService(import_js_repository.DatabaseSchema);
       if (!hasDbs)
-        throw new import_js_format4.Errorf("A DatabaseSchema instance must be registered in the RouterRepositoryContext service.");
+        throw new import_js_format3.Errorf("A DatabaseSchema instance must be registered in the RouterRepositoryContext service.");
       const rds = new import_js_repository_data_schema.RepositoryDataSchema();
       const dbs = this.getService(import_js_repository.DatabaseSchema);
       rds.setService(import_js_repository.DatabaseSchema, dbs);
