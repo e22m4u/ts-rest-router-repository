@@ -1,6 +1,6 @@
 {
   "name": "@e22m4u/ts-rest-router-repository",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Декораторы REST-маршрутизатора для использования моделей в данных запроса",
   "author": "Mikhail Evstropov <e22m4u@yandex.ru>",
   "license": "MIT",
