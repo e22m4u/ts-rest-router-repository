@@ -46,4 +46,74 @@ describe('requestBodyWithModel', function () {
       },
     });
   });
+
+  it('should hide default values by default', function () {
+    const dbs = new DatabaseSchema();
+    const rds = new RepositoryDataSchema();
+    const rrc = new RouterRepositoryContext();
+    rds.setService(DatabaseSchema, dbs);
+    rrc.setService(RepositoryDataSchema, rds);
+    @model()
+    class MyModel {
+      @property({type: RepDataType.STRING, default: 'value'})
+      prop1!: string;
+      @property({type: RepDataType.NUMBER, default: 10})
+      prop2!: number;
+    }
+    dbs.defineModel(getModelDefinitionFromClass(MyModel));
+    class MyController {
+      method(
+        @requestBodyWithModel(MyModel)
+        body: MyModel,
+      ) {}
+    }
+    const mdMap = RequestDataReflector.getMetadata(MyController, 'method');
+    const res = mdMap.get(0);
+    expect(res).to.be.eql({
+      source: RequestDataSource.BODY,
+      schema: {
+        type: DataType.OBJECT,
+        properties: {
+          prop1: {type: DataType.STRING},
+          prop2: {type: DataType.NUMBER},
+        },
+      },
+    });
+  });
+
+  describe('options', function () {
+    it('should use the given options to manager default values', function () {
+      const dbs = new DatabaseSchema();
+      const rds = new RepositoryDataSchema();
+      const rrc = new RouterRepositoryContext();
+      rds.setService(DatabaseSchema, dbs);
+      rrc.setService(RepositoryDataSchema, rds);
+      @model()
+      class MyModel {
+        @property({type: RepDataType.STRING, default: 'value'})
+        prop1!: string;
+        @property({type: RepDataType.NUMBER, default: 10})
+        prop2!: number;
+      }
+      dbs.defineModel(getModelDefinitionFromClass(MyModel));
+      class MyController {
+        method(
+          @requestBodyWithModel(MyModel, {skipDefaultValues: false})
+          body: MyModel,
+        ) {}
+      }
+      const mdMap = RequestDataReflector.getMetadata(MyController, 'method');
+      const res = mdMap.get(0);
+      expect(res).to.be.eql({
+        source: RequestDataSource.BODY,
+        schema: {
+          type: DataType.OBJECT,
+          properties: {
+            prop1: {type: DataType.STRING, default: 'value'},
+            prop2: {type: DataType.NUMBER, default: 10},
+          },
+        },
+      });
+    });
+  });
 });

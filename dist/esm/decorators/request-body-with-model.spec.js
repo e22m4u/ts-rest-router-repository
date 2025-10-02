@@ -68,4 +68,94 @@ describe('requestBodyWithModel', function () {
             },
         });
     });
+    it('should hide default values by default', function () {
+        const dbs = new DatabaseSchema();
+        const rds = new RepositoryDataSchema();
+        const rrc = new RouterRepositoryContext();
+        rds.setService(DatabaseSchema, dbs);
+        rrc.setService(RepositoryDataSchema, rds);
+        let MyModel = class MyModel {
+            prop1;
+            prop2;
+        };
+        __decorate([
+            property({ type: RepDataType.STRING, default: 'value' }),
+            __metadata("design:type", String)
+        ], MyModel.prototype, "prop1", void 0);
+        __decorate([
+            property({ type: RepDataType.NUMBER, default: 10 }),
+            __metadata("design:type", Number)
+        ], MyModel.prototype, "prop2", void 0);
+        MyModel = __decorate([
+            model()
+        ], MyModel);
+        dbs.defineModel(getModelDefinitionFromClass(MyModel));
+        class MyController {
+            method(body) { }
+        }
+        __decorate([
+            __param(0, requestBodyWithModel(MyModel)),
+            __metadata("design:type", Function),
+            __metadata("design:paramtypes", [MyModel]),
+            __metadata("design:returntype", void 0)
+        ], MyController.prototype, "method", null);
+        const mdMap = RequestDataReflector.getMetadata(MyController, 'method');
+        const res = mdMap.get(0);
+        expect(res).to.be.eql({
+            source: RequestDataSource.BODY,
+            schema: {
+                type: DataType.OBJECT,
+                properties: {
+                    prop1: { type: DataType.STRING },
+                    prop2: { type: DataType.NUMBER },
+                },
+            },
+        });
+    });
+    describe('options', function () {
+        it('should use the given options to manager default values', function () {
+            const dbs = new DatabaseSchema();
+            const rds = new RepositoryDataSchema();
+            const rrc = new RouterRepositoryContext();
+            rds.setService(DatabaseSchema, dbs);
+            rrc.setService(RepositoryDataSchema, rds);
+            let MyModel = class MyModel {
+                prop1;
+                prop2;
+            };
+            __decorate([
+                property({ type: RepDataType.STRING, default: 'value' }),
+                __metadata("design:type", String)
+            ], MyModel.prototype, "prop1", void 0);
+            __decorate([
+                property({ type: RepDataType.NUMBER, default: 10 }),
+                __metadata("design:type", Number)
+            ], MyModel.prototype, "prop2", void 0);
+            MyModel = __decorate([
+                model()
+            ], MyModel);
+            dbs.defineModel(getModelDefinitionFromClass(MyModel));
+            class MyController {
+                method(body) { }
+            }
+            __decorate([
+                __param(0, requestBodyWithModel(MyModel, { skipDefaultValues: false })),
+                __metadata("design:type", Function),
+                __metadata("design:paramtypes", [MyModel]),
+                __metadata("design:returntype", void 0)
+            ], MyController.prototype, "method", null);
+            const mdMap = RequestDataReflector.getMetadata(MyController, 'method');
+            const res = mdMap.get(0);
+            expect(res).to.be.eql({
+                source: RequestDataSource.BODY,
+                schema: {
+                    type: DataType.OBJECT,
+                    properties: {
+                        prop1: { type: DataType.STRING, default: 'value' },
+                        prop2: { type: DataType.NUMBER, default: 10 },
+                    },
+                },
+            });
+        });
+    });
 });

@@ -2071,8 +2071,7 @@ var _RouterRepositoryContext = class _RouterRepositoryContext extends Service {
    */
   constructor() {
     super();
-    if (!_RouterRepositoryContext.globalInstance)
-      _RouterRepositoryContext.setGlobalInstance(this);
+    _RouterRepositoryContext.setGlobalInstance(this);
   }
   /**
    * Set global instance.
@@ -2129,11 +2128,11 @@ __publicField(_RouterRepositoryContext, "globalInstance");
 var RouterRepositoryContext = _RouterRepositoryContext;
 
 // dist/esm/decorators/request-body-with-model.js
-function requestBodyWithModel(model) {
+function requestBodyWithModel(model, options) {
   const { modelClass, isArray } = extractModelClassFromDecoratorInput(requestBodyWithModel.name, model);
   const rrc = RouterRepositoryContext.getGlobalInstance();
   const rds = rrc.getRepositoryDataSchemaService();
-  const dataSchema = rds.getDataSchemaByModelClass(modelClass, ProjectionScope.INPUT);
+  const dataSchema = rds.getDataSchemaByModelClass(modelClass, ProjectionScope.INPUT, { skipDefaultValues: true, ...options });
   if (isArray)
     return (0, import_ts_rest_router.requestBody)({ type: import_ts_data_schema.DataType.ARRAY, items: dataSchema });
   return (0, import_ts_rest_router.requestBody)(dataSchema);
@@ -2143,11 +2142,11 @@ __name(requestBodyWithModel, "requestBodyWithModel");
 // dist/esm/decorators/response-body-with-model.js
 var import_ts_data_schema2 = require("@e22m4u/ts-data-schema");
 var import_ts_rest_router2 = require("@e22m4u/ts-rest-router");
-function responseBodyWithModel(model) {
+function responseBodyWithModel(model, options) {
   const { modelClass, isArray } = extractModelClassFromDecoratorInput(responseBodyWithModel.name, model);
   const rrc = RouterRepositoryContext.getGlobalInstance();
   const rds = rrc.getRepositoryDataSchemaService();
-  const dataSchema = rds.getDataSchemaByModelClass(modelClass, ProjectionScope.OUTPUT);
+  const dataSchema = rds.getDataSchemaByModelClass(modelClass, ProjectionScope.OUTPUT, options);
   if (isArray)
     return (0, import_ts_rest_router2.responseBody)({ type: import_ts_data_schema2.DataType.ARRAY, items: dataSchema });
   return (0, import_ts_rest_router2.responseBody)(dataSchema);

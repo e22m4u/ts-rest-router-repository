@@ -2,6 +2,7 @@ import {DecoratorModelInput} from './types.js';
 import {DataType} from '@e22m4u/ts-data-schema';
 import {requestBody} from '@e22m4u/ts-rest-router';
 import {ProjectionScope} from '@e22m4u/ts-projection';
+import {DataSchemaOptions} from '@e22m4u/js-repository-data-schema';
 import {extractModelClassFromDecoratorInput} from './utils/index.js';
 import {RouterRepositoryContext} from '../router-repository-context.js';
 
@@ -23,6 +24,7 @@ import {RouterRepositoryContext} from '../router-repository-context.js';
  */
 export function requestBodyWithModel<T extends object>(
   model: DecoratorModelInput<T>,
+  options?: DataSchemaOptions,
 ): ReturnType<typeof requestBody> {
   const {modelClass, isArray} = extractModelClassFromDecoratorInput(
     requestBodyWithModel.name,
@@ -33,6 +35,7 @@ export function requestBodyWithModel<T extends object>(
   const dataSchema = rds.getDataSchemaByModelClass(
     modelClass,
     ProjectionScope.INPUT,
+    {skipDefaultValues: true, ...options},
   );
   if (isArray) return requestBody({type: DataType.ARRAY, items: dataSchema});
   return requestBody(dataSchema);

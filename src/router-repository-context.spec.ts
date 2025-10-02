@@ -13,7 +13,15 @@ describe('RouterRepositoryContext', function () {
       const res1 = RouterRepositoryContext.hasGlobalInstance();
       expect(res1).to.be.false;
       const res2 = new RouterRepositoryContext();
+      const res3 = RouterRepositoryContext.getGlobalInstance();
+      expect(res2).to.be.eq(res3);
+    });
+
+    it('overrides global instance by current instance', function () {
+      const res1 = RouterRepositoryContext.hasGlobalInstance();
+      expect(res1).to.be.false;
       new RouterRepositoryContext();
+      const res2 = new RouterRepositoryContext();
       const res3 = RouterRepositoryContext.getGlobalInstance();
       expect(res2).to.be.eq(res3);
     });

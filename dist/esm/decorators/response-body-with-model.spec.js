@@ -62,4 +62,92 @@ describe('responseBodyWithModel', function () {
             },
         });
     });
+    it('should use default values by default', function () {
+        const dbs = new DatabaseSchema();
+        const rds = new RepositoryDataSchema();
+        const rrc = new RouterRepositoryContext();
+        rds.setService(DatabaseSchema, dbs);
+        rrc.setService(RepositoryDataSchema, rds);
+        let MyModel = class MyModel {
+            prop1;
+            prop2;
+        };
+        __decorate([
+            property({ type: RepDataType.STRING, default: 'value' }),
+            __metadata("design:type", String)
+        ], MyModel.prototype, "prop1", void 0);
+        __decorate([
+            property({ type: RepDataType.NUMBER, default: 10 }),
+            __metadata("design:type", Number)
+        ], MyModel.prototype, "prop2", void 0);
+        MyModel = __decorate([
+            model()
+        ], MyModel);
+        dbs.defineModel(getModelDefinitionFromClass(MyModel));
+        class MyController {
+            method() { }
+        }
+        __decorate([
+            responseBodyWithModel(MyModel),
+            __metadata("design:type", Function),
+            __metadata("design:paramtypes", []),
+            __metadata("design:returntype", void 0)
+        ], MyController.prototype, "method", null);
+        const mdMap = ResponseBodyReflector.getMetadata(MyController);
+        const res = mdMap.get('method');
+        expect(res).to.be.eql({
+            schema: {
+                type: DataType.OBJECT,
+                properties: {
+                    prop1: { type: DataType.STRING, default: 'value' },
+                    prop2: { type: DataType.NUMBER, default: 10 },
+                },
+            },
+        });
+    });
+    describe('options', function () {
+        it('should use the given options to manager default values', function () {
+            const dbs = new DatabaseSchema();
+            const rds = new RepositoryDataSchema();
+            const rrc = new RouterRepositoryContext();
+            rds.setService(DatabaseSchema, dbs);
+            rrc.setService(RepositoryDataSchema, rds);
+            let MyModel = class MyModel {
+                prop1;
+                prop2;
+            };
+            __decorate([
+                property({ type: RepDataType.STRING, default: 'value' }),
+                __metadata("design:type", String)
+            ], MyModel.prototype, "prop1", void 0);
+            __decorate([
+                property({ type: RepDataType.NUMBER, default: 10 }),
+                __metadata("design:type", Number)
+            ], MyModel.prototype, "prop2", void 0);
+            MyModel = __decorate([
+                model()
+            ], MyModel);
+            dbs.defineModel(getModelDefinitionFromClass(MyModel));
+            class MyController {
+                method() { }
+            }
+            __decorate([
+                responseBodyWithModel(MyModel, { skipDefaultValues: true }),
+                __metadata("design:type", Function),
+                __metadata("design:paramtypes", []),
+                __metadata("design:returntype", void 0)
+            ], MyController.prototype, "method", null);
+            const mdMap = ResponseBodyReflector.getMetadata(MyController);
+            const res = mdMap.get('method');
+            expect(res).to.be.eql({
+                schema: {
+                    type: DataType.OBJECT,
+                    properties: {
+                        prop1: { type: DataType.STRING },
+                        prop2: { type: DataType.NUMBER },
+                    },
+                },
+            });
+        });
+    });
 });

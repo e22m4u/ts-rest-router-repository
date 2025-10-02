@@ -19,11 +19,11 @@ import { RouterRepositoryContext } from '../router-repository-context.js';
  *
  * @param model
  */
-export function responseBodyWithModel(model) {
+export function responseBodyWithModel(model, options) {
     const { modelClass, isArray } = extractModelClassFromDecoratorInput(responseBodyWithModel.name, model);
     const rrc = RouterRepositoryContext.getGlobalInstance();
     const rds = rrc.getRepositoryDataSchemaService();
-    const dataSchema = rds.getDataSchemaByModelClass(modelClass, ProjectionScope.OUTPUT);
+    const dataSchema = rds.getDataSchemaByModelClass(modelClass, ProjectionScope.OUTPUT, options);
     if (isArray)
         return responseBody({ type: DataType.ARRAY, items: dataSchema });
     return responseBody(dataSchema);

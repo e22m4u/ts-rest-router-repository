@@ -1,5 +1,6 @@
 import { DecoratorModelInput } from './types.js';
 import { requestBody } from '@e22m4u/ts-rest-router';
+import { DataSchemaOptions } from '@e22m4u/js-repository-data-schema';
 /**
  * Декоратор-обертка для @requestBody, который позволяет передавать
  * первым аргументом модель (класс), массив с единственной моделью
@@ -16,4 +17,4 @@ import { requestBody } from '@e22m4u/ts-rest-router';
  *
  * @param model
  */
-export declare function requestBodyWithModel<T extends object>(model: DecoratorModelInput<T>): ReturnType<typeof requestBody>;
+export declare function requestBodyWithModel<T extends object>(model: DecoratorModelInput<T>, options?: DataSchemaOptions): ReturnType<typeof requestBody>;
