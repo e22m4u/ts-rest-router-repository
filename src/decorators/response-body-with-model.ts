@@ -4,7 +4,7 @@ import {responseBody} from '@e22m4u/ts-rest-router';
 import {ProjectionScope} from '@e22m4u/ts-projection';
 import {DataSchemaOptions} from '@e22m4u/js-repository-data-schema';
 import {extractModelClassFromDecoratorInput} from './utils/index.js';
-import {RouterRepositoryContext} from '../router-repository-context.js';
+import {RepositoryDataSchema} from '@e22m4u/js-repository-data-schema';
 
 /**
  * Декоратор-обертка для @responseBody, который позволяет передавать
@@ -26,17 +26,18 @@ export function responseBodyWithModel<T extends object>(
   model: DecoratorModelInput<T>,
   options?: DataSchemaOptions,
 ): ReturnType<typeof responseBody> {
-  const {modelClass, isArray} = extractModelClassFromDecoratorInput(
-    responseBodyWithModel.name,
-    model,
-  );
-  const rrc = RouterRepositoryContext.getGlobalInstance();
-  const rds = rrc.getRepositoryDataSchemaService();
-  const dataSchema = rds.getDataSchemaByModelClass(
-    modelClass,
-    ProjectionScope.OUTPUT,
-    options,
-  );
-  if (isArray) return responseBody({type: DataType.ARRAY, items: dataSchema});
-  return responseBody(dataSchema);
+  return responseBody(container => {
+    const {modelClass, isArray} = extractModelClassFromDecoratorInput(
+      responseBodyWithModel.name,
+      model,
+    );
+    const rds = container.getRegistered(RepositoryDataSchema);
+    const dataSchema = rds.getDataSchemaByModelClass(
+      modelClass,
+      ProjectionScope.OUTPUT,
+      options,
+    );
+    if (isArray) return {type: DataType.ARRAY, items: dataSchema};
+    return dataSchema;
+  });
 }

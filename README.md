@@ -4,8 +4,14 @@
 модели базы данных (TypeScript классы) для описания принимаемых и возвращаемых
 данных запроса.
 
-REST-маршрутизатор [@e22m4u/ts-rest-router](https://www.npmjs.com/package/@e22m4u/ts-rest-router)  
-Определение модели [@e22m4u/js-repository-decorators](https://www.npmjs.com/package/@e22m4u/js-repository-decorators#%D0%9F%D1%80%D0%B8%D0%BC%D0%B5%D1%80)  
+Модуль встраивается в связку:
+
+- [@e22m4u/js-service](https://www.npmjs.com/package/@e22m4u/js-service)  
+  \- сервис-локатор;
+- [@e22m4u/ts-repository](https://www.npmjs.com/package/@e22m4u/ts-repository)  
+  \- ORM/ODM для работы с базами данных;
+- [@e22m4u/ts-rest-router](https://www.npmjs.com/package/@e22m4u/ts-rest-router)  
+  \- REST-маршрутизатор на основе префиксного дерева;
 
 ## Содержание
 
@@ -38,27 +44,31 @@ npm install @e22m4u/ts-rest-router-repository
 
 ## Начальная настройка
 
-Прежде чем использовать декораторы, требуется создать экземпляр класса
-`RouterRepositoryContext` и выполнить инъекцию сервиса `DatabaseSchema`
-(схема базы данных) в данный экземпляр, как это показано ниже.
+Модули `ts-rest-router` и `js-repository` обычно работают в рамках одного
+сервис-контейнера или корневого сервиса (*application*). Ниже рассматривается
+первый вариант.
 
-```ts
-import {DatabaseSchema} from '@e22m4u/js-repository';
-import {RouterRepositoryContext} from '@e22m4u/ts-rest-router-repository';
+```js
+import {RestRouter} from '@e22m4u/ts-rest-router';
+import {ServiceContainer} from '@e22m4u/js-service';
+import {DatabaseSchema} from '@e22m4u/js-trie-router';
 
-const dbs = new DatabaseSchema();
-const rrc = new RouterRepositoryContext();
-rrc.setService(DatabaseSchema, dbs);
+const app = new ServiceContainer();
+// инъекция маршрутизатора и схемы баз данных
+const router = app.get(RestRouter);
+const dbs = app.get(DatabaseSchema);
+// инъекция сервиса RepositoryDataSchema
+app.add(RepositoryDataSchema);
 ```
 
-В примерах декораторов используется модель `City`, определение данной модели
-находится ниже.
+*i. MongoDB адаптер устанавливается отдельно (см. [js-repository-mongodb-adapter](https://www.npmjs.com/package/@e22m4u/js-repository-mongodb-adapter)).*
+
+В примерах используется модель `City`, определение которой приводится ниже.
 
 ```ts
-import {DataType} from '@e22m4u/js-repository';
-import {model} from '@e22m4u/js-repository-decorators';
-import {property} from '@e22m4u/js-repository-decorators';
-import {getModelDefinitionFromClass} from '@e22m4u/js-repository-decorators';
+import {model} from '@e22m4u/ts-repository';
+import {DataType} from '@e22m4u/ts-repository';
+import {property} from '@e22m4u/ts-repository';
 
 // определение модели City с помощью декораторов
 @model()
@@ -75,7 +85,7 @@ class City {
 
 // регистрация модели City в схеме базы данных
 // (переменная `dbs` является экземпляром DatabaseSchema)
-dbs.defineModel(getModelDefinitionFromClass(City));
+dbs.defineModelByClass(City);
 ```
 
 ## Декораторы
@@ -110,10 +120,9 @@ function requestBodyWithModel<T extends object>(
 Пример:
 
 ```ts
-import {requestBodyWithModel} from '@e22m4u/ts-rest-router-repository';
-// peerDependencies
 import {postAction} from '@e22m4u/ts-rest-router';
 import {restController} from '@e22m4u/ts-rest-router';
+import {requestBodyWithModel} from '@e22m4u/ts-rest-router-repository';
 
 // определение контроллера
 @restController('cities')
@@ -160,10 +169,9 @@ function responseBodyWithModel<T extends object>(
 Пример:
 
 ```ts
-import {responseBodyWithModel} from '@e22m4u/ts-rest-router-repository';
-// peerDependencies
 import {postAction} from '@e22m4u/ts-rest-router';
 import {restController} from '@e22m4u/ts-rest-router';
+import {responseBodyWithModel} from '@e22m4u/ts-rest-router-repository';
 
 // определение контроллера
 @restController('cities')
@@ -175,7 +183,7 @@ class CityController {
   // ответа согласно указанной модели
   @responseBodyWithModel(City)
   async create() {
-    return {name: 'Pattaya', codes: [38, 20150]};
+    return {name: 'Moscow', codes: [38, 20150]};
   }
 }
 
