@@ -22,7 +22,7 @@ import { RepositoryDataSchema } from '@e22m4u/js-repository-data-schema';
 export function requestBodyWithModel(model, options) {
     return requestBody(container => {
         const { modelClass, isArray } = extractModelClassFromDecoratorInput(requestBodyWithModel.name, model);
-        const rds = container.getRegistered(RepositoryDataSchema);
+        const rds = container.get(RepositoryDataSchema);
         const dataSchema = rds.getDataSchemaByModelClass(modelClass, ProjectionScope.INPUT, { skipDefaultValues: true, ...options });
         if (isArray)
             return { type: DataType.ARRAY, items: dataSchema };

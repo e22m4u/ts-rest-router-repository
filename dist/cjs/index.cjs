@@ -1329,7 +1329,7 @@ var import_js_repository_data_schema = require("@e22m4u/js-repository-data-schem
 function requestBodyWithModel(model, options) {
   return (0, import_ts_rest_router.requestBody)((container) => {
     const { modelClass, isArray } = extractModelClassFromDecoratorInput(requestBodyWithModel.name, model);
-    const rds = container.getRegistered(import_js_repository_data_schema.RepositoryDataSchema);
+    const rds = container.get(import_js_repository_data_schema.RepositoryDataSchema);
     const dataSchema = rds.getDataSchemaByModelClass(modelClass, ProjectionScope.INPUT, { skipDefaultValues: true, ...options });
     if (isArray)
       return { type: import_ts_data_schema.DataType.ARRAY, items: dataSchema };
@@ -1345,7 +1345,7 @@ var import_js_repository_data_schema2 = require("@e22m4u/js-repository-data-sche
 function responseBodyWithModel(model, options) {
   return (0, import_ts_rest_router2.responseBody)((container) => {
     const { modelClass, isArray } = extractModelClassFromDecoratorInput(responseBodyWithModel.name, model);
-    const rds = container.getRegistered(import_js_repository_data_schema2.RepositoryDataSchema);
+    const rds = container.get(import_js_repository_data_schema2.RepositoryDataSchema);
     const dataSchema = rds.getDataSchemaByModelClass(modelClass, ProjectionScope.OUTPUT, options);
     if (isArray)
       return { type: import_ts_data_schema2.DataType.ARRAY, items: dataSchema };

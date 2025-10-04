@@ -31,7 +31,7 @@ export function responseBodyWithModel<T extends object>(
       responseBodyWithModel.name,
       model,
     );
-    const rds = container.getRegistered(RepositoryDataSchema);
+    const rds = container.get(RepositoryDataSchema);
     const dataSchema = rds.getDataSchemaByModelClass(
       modelClass,
       ProjectionScope.OUTPUT,

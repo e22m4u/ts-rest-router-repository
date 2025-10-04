@@ -57,8 +57,6 @@ const app = new ServiceContainer();
 // инъекция маршрутизатора и схемы баз данных
 const router = app.get(RestRouter);
 const dbs = app.get(DatabaseSchema);
-// инъекция сервиса RepositoryDataSchema
-app.add(RepositoryDataSchema);
 ```
 
 *i. MongoDB адаптер устанавливается отдельно (см. [js-repository-mongodb-adapter](https://www.npmjs.com/package/@e22m4u/js-repository-mongodb-adapter)).*
@@ -84,7 +82,7 @@ class City {
 }
 
 // регистрация модели City в схеме базы данных
-// (переменная `dbs` является экземпляром DatabaseSchema)
+// (переменная `dbs` объявлена в начальном примере)
 dbs.defineModelByClass(City);
 ```
 
@@ -139,6 +137,10 @@ class CityController {
     return {status: 'success', received: body};
   }
 }
+
+// регистрация контроллера в маршрутизаторе
+// (переменная `router` объявлена в начальном примере)
+router.addController(CityController);
 ```
 
 ### @responseBodyWithModel
@@ -187,6 +189,9 @@ class CityController {
   }
 }
 
+// регистрация контроллера в маршрутизаторе
+// (переменная `router` объявлена в начальном примере)
+router.addController(CityController);
 ```
 
 ## Тесты
