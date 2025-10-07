@@ -1197,13 +1197,93 @@ var require_Reflect = __commonJS({
 // dist/esm/index.js
 var index_exports = {};
 __export(index_exports, {
+  COUNT_RESULT_SCHEMA: () => COUNT_RESULT_SCHEMA,
+  FILTER_CLAUSE_SCHEMA: () => FILTER_CLAUSE_SCHEMA,
+  INCLUDE_CLAUSE_SCHEMA: () => INCLUDE_CLAUSE_SCHEMA,
+  ITEM_FILTER_CLAUSE_SCHEMA: () => ITEM_FILTER_CLAUSE_SCHEMA,
+  WHERE_CLAUSE_SCHEMA: () => WHERE_CLAUSE_SCHEMA,
   requestBodyWithModel: () => requestBodyWithModel,
   responseBodyWithModel: () => responseBodyWithModel
 });
 module.exports = __toCommonJS(index_exports);
 
-// dist/esm/decorators/request-body-with-model.js
+// dist/esm/schemas/where-clause-schema.js
 var import_ts_data_schema = require("@e22m4u/ts-data-schema");
+var WHERE_CLAUSE_SCHEMA = {
+  type: import_ts_data_schema.DataType.OBJECT,
+  default: /* @__PURE__ */ __name(() => ({}), "default")
+};
+
+// dist/esm/schemas/count-result-schema.js
+var import_ts_data_schema2 = require("@e22m4u/ts-data-schema");
+var COUNT_RESULT_SCHEMA = {
+  type: import_ts_data_schema2.DataType.OBJECT,
+  properties: {
+    count: {
+      type: import_ts_data_schema2.DataType.NUMBER
+    }
+  }
+};
+
+// dist/esm/schemas/filter-clause-schema.js
+var import_ts_data_schema3 = require("@e22m4u/ts-data-schema");
+var FILTER_CLAUSE_SCHEMA = {
+  type: import_ts_data_schema3.DataType.OBJECT,
+  properties: {
+    where: {
+      type: import_ts_data_schema3.DataType.OBJECT,
+      default: /* @__PURE__ */ __name(() => ({}), "default")
+    },
+    order: {
+      type: import_ts_data_schema3.DataType.ANY,
+      default: /* @__PURE__ */ __name(() => [], "default")
+    },
+    limit: {
+      type: import_ts_data_schema3.DataType.NUMBER,
+      default: 10
+    },
+    skip: {
+      type: import_ts_data_schema3.DataType.NUMBER,
+      default: 0
+    },
+    fields: {
+      type: import_ts_data_schema3.DataType.ARRAY,
+      items: { type: import_ts_data_schema3.DataType.STRING },
+      default: /* @__PURE__ */ __name(() => [], "default")
+    },
+    include: {
+      type: import_ts_data_schema3.DataType.ANY,
+      default: /* @__PURE__ */ __name(() => [], "default")
+    }
+  }
+};
+
+// dist/esm/schemas/include-clause-schema.js
+var import_ts_data_schema4 = require("@e22m4u/ts-data-schema");
+var INCLUDE_CLAUSE_SCHEMA = {
+  type: import_ts_data_schema4.DataType.ANY,
+  default: /* @__PURE__ */ __name(() => [], "default")
+};
+
+// dist/esm/schemas/item-filter-clause-schema.js
+var import_ts_data_schema5 = require("@e22m4u/ts-data-schema");
+var ITEM_FILTER_CLAUSE_SCHEMA = {
+  type: import_ts_data_schema5.DataType.OBJECT,
+  properties: {
+    fields: {
+      type: import_ts_data_schema5.DataType.ARRAY,
+      items: { type: import_ts_data_schema5.DataType.STRING },
+      default: /* @__PURE__ */ __name(() => [], "default")
+    },
+    include: {
+      type: import_ts_data_schema5.DataType.ANY,
+      default: /* @__PURE__ */ __name(() => [], "default")
+    }
+  }
+};
+
+// dist/esm/decorators/request-body-with-model.js
+var import_ts_data_schema6 = require("@e22m4u/ts-data-schema");
 var import_ts_rest_router = require("@e22m4u/ts-rest-router");
 
 // node_modules/@e22m4u/ts-projection/dist/esm/projection.js
@@ -1331,7 +1411,7 @@ function requestBodyWithModel(model, options) {
     const { modelClass, isArray } = extractModelClassFromDecoratorInput(requestBodyWithModel.name, model);
     const rds = container.get(import_js_repository_data_schema.RepositoryDataSchema);
     const dataSchema = rds.getDataSchemaByModelClass(modelClass, ProjectionScope.INPUT, { skipDefaultValues: true, ...options });
-    const res = isArray ? { type: import_ts_data_schema.DataType.ARRAY, items: dataSchema } : dataSchema;
+    const res = isArray ? { type: import_ts_data_schema6.DataType.ARRAY, items: dataSchema } : dataSchema;
     if (typeof (options == null ? void 0 : options.required) === "boolean") {
       res.required = options == null ? void 0 : options.required;
     }
@@ -1341,7 +1421,7 @@ function requestBodyWithModel(model, options) {
 __name(requestBodyWithModel, "requestBodyWithModel");
 
 // dist/esm/decorators/response-body-with-model.js
-var import_ts_data_schema2 = require("@e22m4u/ts-data-schema");
+var import_ts_data_schema7 = require("@e22m4u/ts-data-schema");
 var import_ts_rest_router2 = require("@e22m4u/ts-rest-router");
 var import_js_repository_data_schema2 = require("@e22m4u/js-repository-data-schema");
 function responseBodyWithModel(model, options) {
@@ -1350,7 +1430,7 @@ function responseBodyWithModel(model, options) {
     const rds = container.get(import_js_repository_data_schema2.RepositoryDataSchema);
     const dataSchema = rds.getDataSchemaByModelClass(modelClass, ProjectionScope.OUTPUT, options);
     if (isArray)
-      return { type: import_ts_data_schema2.DataType.ARRAY, items: dataSchema };
+      return { type: import_ts_data_schema7.DataType.ARRAY, items: dataSchema };
     return dataSchema;
   });
 }
@@ -1360,6 +1440,11 @@ __name(responseBodyWithModel, "responseBodyWithModel");
 __reExport(index_exports, require("@e22m4u/js-repository-data-schema"), module.exports);
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
+  COUNT_RESULT_SCHEMA,
+  FILTER_CLAUSE_SCHEMA,
+  INCLUDE_CLAUSE_SCHEMA,
+  ITEM_FILTER_CLAUSE_SCHEMA,
+  WHERE_CLAUSE_SCHEMA,
   requestBodyWithModel,
   responseBodyWithModel,
   ...require("@e22m4u/js-repository-data-schema")

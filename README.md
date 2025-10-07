@@ -21,6 +21,7 @@
 - [Декораторы](#декораторы)
   - [@requestBodyWithModel](#requestbodywithmodel)
   - [@responseBodyWithModel](#responsebodywithmodel)
+- [Схемы данных](#схемы-данных)
 - [Тесты](#тесты)
 - [Лицензия](#лицензия)
 
@@ -192,6 +193,261 @@ class CityController {
 // регистрация контроллера в маршрутизаторе
 // (переменная `router` объявлена в начальном примере)
 router.addController(CityController);
+```
+
+## Схемы данных
+
+- [COUNT_RESULT_SCHEMA](#COUNT_RESULT_SCHEMA)
+- [WHERE_CLAUSE_SCHEMA](#WHERE_CLAUSE_SCHEMA)
+- [FILTER_CLAUSE_SCHEMA](#FILTER_CLAUSE_SCHEMA)
+- [ITEM_FILTER_CLAUSE_SCHEMA](#ITEM_FILTER_CLAUSE_SCHEMA)
+- [INCLUDE_CLAUSE_SCHEMA](#INCLUDE_CLAUSE_SCHEMA)
+
+### COUNT_RESULT_SCHEMA
+
+Схема результата работы метода репозитория `count`.
+
+Определение:
+
+```ts
+import {DataType} from '@e22m4u/ts-data-schema';
+import {DataSchema} from '@e22m4u/ts-data-schema';
+
+/**
+ * Count result schema.
+ */
+export const COUNT_RESULT_SCHEMA: DataSchema = {
+  type: DataType.OBJECT,
+  properties: {
+    count: {
+      type: DataType.NUMBER,
+    }
+  }
+}
+```
+
+Пример:
+
+```ts
+import {CityModel} from '../models/index.js';
+import {getAction} from '@e22m4u/ts-rest-router';
+import {WhereClause} from '@e22m4u/ts-repository';
+import {responseBody} from '@e22m4u/ts-rest-router';
+import {requestQuery} from '@e22m4u/ts-rest-router';
+import {DatabaseSchema} from '@e22m4u/ts-repository';
+import {COUNT_RESULT_SCHEMA} from '@e22m4u/ts-rest-router-repository';
+import {WHERE_CLAUSE_SCHEMA} from '@e22m4u/ts-rest-router-repository';
+
+class CityController {
+  @getAction()
+  @responseBody(COUNT_RESULT_SCHEMA)
+  async count(
+    @requestQuery('where', WHERE_CLAUSE_SCHEMA)
+    where?: WhereClause
+  ) {
+    const dbs = this.getService(DatabaseSchema);
+    const rep = dbs.getRepositoryByModelClass(CityModel);
+    return rep.count(where);
+  }
+}
+```
+
+### WHERE_CLAUSE_SCHEMA
+
+Схема объекта выборки для методов репозитория `count` и `delete`.
+
+Определение:
+
+```ts
+import {DataType} from '@e22m4u/ts-data-schema';
+import {DataSchema} from '@e22m4u/ts-data-schema';
+
+/**
+ * Where clause schema.
+ */
+export const WHERE_CLAUSE_SCHEMA: DataSchema = {
+  type: DataType.OBJECT,
+  default: () => ({}),
+};
+```
+
+Пример:
+
+```ts
+import {CityModel} from '../models/index.js';
+import {WhereClause} from '@e22m4u/ts-repository';
+import {responseBody} from '@e22m4u/ts-rest-router';
+import {requestQuery} from '@e22m4u/ts-rest-router';
+import {deleteAction} from '@e22m4u/ts-rest-router';
+import {DatabaseSchema} from '@e22m4u/ts-repository';
+import {COUNT_RESULT_SCHEMA} from '@e22m4u/ts-rest-router-repository';
+import {WHERE_CLAUSE_SCHEMA} from '@e22m4u/ts-rest-router-repository';
+
+class CityController {
+  @deleteAction()
+  @responseBody(COUNT_RESULT_SCHEMA)
+  async delete(
+    @requestQuery('where', WHERE_CLAUSE_SCHEMA)
+    where?: WhereClause,
+  ) {
+    const dbs = this.getService(DatabaseSchema);
+    const rep = dbs.getRepositoryByModelClass(CityModel);
+    return rep.delete(where);
+  }
+}
+```
+
+### FILTER_CLAUSE_SCHEMA
+
+Схема объекта фильтрации для метода репозитория `find` и `findOne`.
+
+Определение:
+
+```ts
+import {DataType} from '@e22m4u/ts-data-schema';
+import {DataSchema} from '@e22m4u/ts-data-schema';
+
+/**
+ * Filter clause schema.
+ */
+export const FILTER_CLAUSE_SCHEMA: DataSchema = {
+  type: DataType.OBJECT,
+  properties: {
+    where: {
+      type: DataType.OBJECT,
+      default: () => ({}),
+    },
+    order: {
+      type: DataType.ANY,
+      default: () => [],
+    },
+    limit: {
+      type: DataType.NUMBER,
+      default: 10,
+    },
+    skip: {
+      type: DataType.NUMBER,
+      default: 0,
+    },
+    fields: {
+      type: DataType.ARRAY,
+      items: {type: DataType.STRING},
+      default: () => [],
+    },
+    include: {
+      type: DataType.ANY,
+      default: () => [],
+    },
+  },
+};
+```
+
+Пример:
+
+```ts
+import {CityModel} from '../models/index.js';
+import {getAction} from '@e22m4u/ts-rest-router';
+import {FilterClause} from '@e22m4u/ts-repository';
+import {requestQuery} from '@e22m4u/ts-rest-router';
+import {DatabaseSchema} from '@e22m4u/ts-repository';
+import {FILTER_CLAUSE_SCHEMA} from '@e22m4u/ts-rest-router-repository';
+import {responseBodyWithModel} from '@e22m4u/ts-rest-router-repository';
+
+class CityController {
+  @getAction()
+  @responseBodyWithModel([CityModel])
+  async find(
+    @requestQuery('filter', FILTER_CLAUSE_SCHEMA)
+    filter?: FilterClause
+  ) {
+    const dbs = this.getService(DatabaseSchema);
+    const rep = dbs.getRepositoryByModelClass(CityModel);
+    return rep.find(filter);
+  }
+}
+```
+
+### ITEM_FILTER_CLAUSE_SCHEMA
+
+Схема объекта фильтрации для методов репозитория:
+
+- `create`
+- `replaceById`
+- `replaceOrCreate`
+- `patchById`
+- `findById`
+
+Определение:
+
+```ts
+import {DataType} from '@e22m4u/ts-data-schema';
+import {DataSchema} from '@e22m4u/ts-data-schema';
+
+/**
+ * Item filter clause schema.
+ */
+export const ITEM_FILTER_CLAUSE_SCHEMA: DataSchema = {
+  type: DataType.OBJECT,
+  properties: {
+    fields: {
+      type: DataType.ARRAY,
+      items: {type: DataType.STRING},
+      default: () => [],
+    },
+    include: {
+      type: DataType.ANY,
+      default: () => [],
+    },
+  },
+};
+```
+
+Пример:
+
+```ts
+import {CityModel} from '../models/index.js';
+import {getAction} from '@e22m4u/ts-rest-router';
+import {requestParam} from '@e22m4u/ts-rest-router';
+import {requestQuery} from '@e22m4u/ts-rest-router';
+import {DatabaseSchema} from '@e22m4u/ts-repository';
+import {ItemFilterClause} from '@e22m4u/ts-repository';
+import {responseBodyWithModel} from '@e22m4u/ts-rest-router-repository';
+import {ITEM_FILTER_CLAUSE_SCHEMA} from '@e22m4u/ts-rest-router-repository';
+
+class CityController {
+  @getAction(':id')
+  @responseBodyWithModel(CityModel)
+  async findById(
+    @requestParam('id', {required: true})
+    id: string,
+    @requestQuery('filter', ITEM_FILTER_CLAUSE_SCHEMA)
+    filter?: ItemFilterClause,
+  ) {
+    const dbs = this.getService(DatabaseSchema);
+    const rep = dbs.getRepositoryByModelClass(CityModel);
+    return rep.findById(id, filter);
+  }
+}
+```
+
+### INCLUDE_CLAUSE_SCHEMA
+
+Схема включения связанных данных в ответ (для частных случаев).
+
+Определение:
+
+```ts
+import {DataType} from '@e22m4u/ts-data-schema';
+import {DataSchema} from '@e22m4u/ts-data-schema';
+
+/**
+ * Include clause schema.
+ */
+export const INCLUDE_CLAUSE_SCHEMA: DataSchema = {
+  type: DataType.ANY,
+  default: () => [],
+};
+
 ```
 
 ## Тесты
