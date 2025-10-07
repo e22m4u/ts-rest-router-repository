@@ -1,3 +1,4 @@
+import {Flatten} from '../types.js';
 import {DecoratorModelInput} from './types.js';
 import {DataType} from '@e22m4u/ts-data-schema';
 import {requestBody} from '@e22m4u/ts-rest-router';
@@ -5,6 +6,13 @@ import {ProjectionScope} from '@e22m4u/ts-projection';
 import {DataSchemaOptions} from '@e22m4u/js-repository-data-schema';
 import {extractModelClassFromDecoratorInput} from './utils/index.js';
 import {RepositoryDataSchema} from '@e22m4u/js-repository-data-schema';
+
+/**
+ * Request body with model options.
+ */
+export type RequestBodyWithModelDecoratorOptions = Flatten<
+  DataSchemaOptions & {required?: boolean}
+>;
 
 /**
  * Декоратор-обертка для @requestBody, который позволяет передавать
@@ -24,7 +32,7 @@ import {RepositoryDataSchema} from '@e22m4u/js-repository-data-schema';
  */
 export function requestBodyWithModel<T extends object>(
   model: DecoratorModelInput<T>,
-  options?: DataSchemaOptions,
+  options?: RequestBodyWithModelDecoratorOptions,
 ): ReturnType<typeof requestBody> {
   return requestBody(container => {
     const {modelClass, isArray} = extractModelClassFromDecoratorInput(
@@ -37,7 +45,12 @@ export function requestBodyWithModel<T extends object>(
       ProjectionScope.INPUT,
       {skipDefaultValues: true, ...options},
     );
-    if (isArray) return {type: DataType.ARRAY, items: dataSchema};
-    return dataSchema;
+    const res = isArray
+      ? {type: DataType.ARRAY, items: dataSchema}
+      : dataSchema;
+    if (typeof options?.required === 'boolean') {
+      res.required = options?.required;
+    }
+    return res;
   });
 }

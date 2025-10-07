@@ -1331,9 +1331,11 @@ function requestBodyWithModel(model, options) {
     const { modelClass, isArray } = extractModelClassFromDecoratorInput(requestBodyWithModel.name, model);
     const rds = container.get(import_js_repository_data_schema.RepositoryDataSchema);
     const dataSchema = rds.getDataSchemaByModelClass(modelClass, ProjectionScope.INPUT, { skipDefaultValues: true, ...options });
-    if (isArray)
-      return { type: import_ts_data_schema.DataType.ARRAY, items: dataSchema };
-    return dataSchema;
+    const res = isArray ? { type: import_ts_data_schema.DataType.ARRAY, items: dataSchema } : dataSchema;
+    if (typeof (options == null ? void 0 : options.required) === "boolean") {
+      res.required = options == null ? void 0 : options.required;
+    }
+    return res;
   });
 }
 __name(requestBodyWithModel, "requestBodyWithModel");

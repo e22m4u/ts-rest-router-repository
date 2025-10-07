@@ -110,5 +110,40 @@ describe('requestBodyWithModel', function () {
         },
       });
     });
+
+    it('should allow to patch the "required" option in DataSchema', function () {
+      const container = new ServiceContainer();
+      const dbs = container.get(DatabaseSchema);
+      container.use(RepositoryDataSchema);
+      @model()
+      class MyModel {}
+      dbs.defineModel(getModelDefinitionFromClass(MyModel));
+      class MyController {
+        method(
+          @requestBodyWithModel(MyModel, {required: true})
+          body1?: unknown,
+          @requestBodyWithModel(MyModel, {required: false})
+          body2?: unknown,
+        ) {}
+      }
+      const mdMap = RequestDataReflector.getMetadata(MyController, 'method');
+      const md1 = mdMap.get(0) as RequestDataMetadata;
+      const md2 = mdMap.get(1) as RequestDataMetadata;
+      const factory1 = md1.schema as DataSchemaFactory;
+      const factory2 = md2.schema as DataSchemaFactory;
+      expect(factory1).to.be.a('function');
+      expect(factory2).to.be.a('function');
+      const res1 = factory1(container);
+      const res2 = factory2(container);
+      console.log(res1);
+      expect(res1).to.be.eql({
+        type: DataType.OBJECT,
+        required: true,
+      });
+      expect(res2).to.be.eql({
+        type: DataType.OBJECT,
+        required: false,
+      });
+    });
   });
 });

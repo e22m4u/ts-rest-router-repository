@@ -24,8 +24,12 @@ export function requestBodyWithModel(model, options) {
         const { modelClass, isArray } = extractModelClassFromDecoratorInput(requestBodyWithModel.name, model);
         const rds = container.get(RepositoryDataSchema);
         const dataSchema = rds.getDataSchemaByModelClass(modelClass, ProjectionScope.INPUT, { skipDefaultValues: true, ...options });
-        if (isArray)
-            return { type: DataType.ARRAY, items: dataSchema };
-        return dataSchema;
+        const res = isArray
+            ? { type: DataType.ARRAY, items: dataSchema }
+            : dataSchema;
+        if (typeof options?.required === 'boolean') {
+            res.required = options?.required;
+        }
+        return res;
     });
 }
