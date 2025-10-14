@@ -1,6 +1,6 @@
 import {Flatten} from '../types.js';
 import {DecoratorModelInput} from './types.js';
-import {DataType} from '@e22m4u/ts-data-schema';
+import {DataType} from '@e22m4u/js-data-schema';
 import {requestBody} from '@e22m4u/ts-rest-router';
 import {ProjectionScope} from '@e22m4u/ts-projection';
 import {DataSchemaOptions} from '@e22m4u/js-repository-data-schema';
