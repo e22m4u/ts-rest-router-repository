@@ -39,9 +39,9 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@e22m4u/js-data-schema": "~0.4.6",
-    "@e22m4u/js-format": "~0.2.0",
-    "@e22m4u/js-repository-data-schema": "~0.3.0"
+    "@e22m4u/js-data-schema": "~0.4.7",
+    "@e22m4u/js-format": "~0.2.1",
+    "@e22m4u/js-repository-data-schema": "~0.3.1"
   },
   "peerDependencies": {
     "@e22m4u/js-repository": "~0.6.0",
@@ -50,7 +50,7 @@
   "devDependencies": {
     "@commitlint/cli": "~20.1.0",
     "@commitlint/config-conventional": "~20.0.0",
-    "@e22m4u/js-repository-decorators": "~0.3.0",
+    "@e22m4u/js-repository-decorators": "~0.3.1",
     "@eslint/js": "~9.39.1",
     "@types/chai": "~5.2.3",
     "@types/debug": "~4.1.12",
