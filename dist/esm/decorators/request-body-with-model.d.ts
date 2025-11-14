@@ -1,7 +1,7 @@
 import { Flatten } from '../types.js';
 import { DecoratorModelInput } from './types.js';
 import { requestBody } from '@e22m4u/ts-rest-router';
-import { DataSchemaOptions } from '@e22m4u/js-repository-data-schema';
+import { DataSchemaOptions } from '@e22m4u/ts-repository-data-schema';
 /**
  * Request body with model options.
  */

@@ -1,16 +1,22 @@
 import {expect} from 'chai';
 import {DataType} from '@e22m4u/ts-data-schema';
 import {ServiceContainer} from '@e22m4u/js-service';
-import {DatabaseSchema} from '@e22m4u/js-repository';
-import {model} from '@e22m4u/js-repository-decorators';
-import {property} from '@e22m4u/js-repository-decorators';
-import {DataSchemaFactory} from '@e22m4u/ts-rest-router';
-import {ResponseBodyMetadata} from '@e22m4u/ts-rest-router';
-import {ResponseBodyReflector} from '@e22m4u/ts-rest-router';
-import {DataType as RepDataType} from '@e22m4u/js-repository';
 import {responseBodyWithModel} from './response-body-with-model.js';
-import {RepositoryDataSchema} from '@e22m4u/js-repository-data-schema';
-import {getModelDefinitionFromClass} from '@e22m4u/js-repository-decorators';
+import {RepositoryDataSchema} from '@e22m4u/ts-repository-data-schema';
+
+import {
+  DataSchemaFactory,
+  ResponseBodyMetadata,
+  ResponseBodyReflector,
+} from '@e22m4u/ts-rest-router';
+
+import {
+  model,
+  property,
+  DatabaseSchema,
+  DataType as RepDataType,
+  getModelDefinitionFromClass,
+} from '@e22m4u/ts-repository';
 
 describe('responseBodyWithModel', function () {
   it('set DataSchema by model class', function () {

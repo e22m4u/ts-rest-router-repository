@@ -5,8 +5,8 @@
   "author": "Mikhail Evstropov <e22m4u@yandex.ru>",
   "license": "MIT",
   "keywords": [
-    "js-repository",
-    "js-rest-router",
+    "ts-repository",
+    "ts-rest-router",
     "decorators"
   ],
   "homepage": "https://github.com/e22m4u/ts-rest-router-repository",
@@ -40,17 +40,16 @@
   },
   "dependencies": {
     "@e22m4u/ts-data-schema": "~0.4.9",
-    "@e22m4u/js-format": "~0.2.1",
-    "@e22m4u/js-repository-data-schema": "~0.3.2"
+    "@e22m4u/ts-repository-data-schema": "~0.3.3",
+    "@e22m4u/js-format": "~0.2.1"
   },
   "peerDependencies": {
-    "@e22m4u/js-repository": "~0.6.0",
+    "@e22m4u/ts-repository": "~0.2.0",
     "@e22m4u/ts-rest-router": "~0.6.0"
   },
   "devDependencies": {
     "@commitlint/cli": "~20.1.0",
     "@commitlint/config-conventional": "~20.0.0",
-    "@e22m4u/js-repository-decorators": "~0.3.1",
     "@eslint/js": "~9.39.1",
     "@types/chai": "~5.2.3",
     "@types/debug": "~4.1.12",

@@ -3,9 +3,12 @@ import {DecoratorModelInput} from './types.js';
 import {DataType} from '@e22m4u/ts-data-schema';
 import {requestBody} from '@e22m4u/ts-rest-router';
 import {ProjectionScope} from '@e22m4u/ts-projection';
-import {DataSchemaOptions} from '@e22m4u/js-repository-data-schema';
 import {extractModelClassFromDecoratorInput} from './utils/index.js';
-import {RepositoryDataSchema} from '@e22m4u/js-repository-data-schema';
+
+import {
+  DataSchemaOptions,
+  RepositoryDataSchema,
+} from '@e22m4u/ts-repository-data-schema';
 
 /**
  * Request body with model options.

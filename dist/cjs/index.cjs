@@ -1405,11 +1405,11 @@ function extractModelClassFromDecoratorInput(decoratorName, modelInput) {
 __name(extractModelClassFromDecoratorInput, "extractModelClassFromDecoratorInput");
 
 // dist/esm/decorators/request-body-with-model.js
-var import_js_repository_data_schema = require("@e22m4u/js-repository-data-schema");
+var import_ts_repository_data_schema = require("@e22m4u/ts-repository-data-schema");
 function requestBodyWithModel(model, options) {
   return (0, import_ts_rest_router.requestBody)((container) => {
     const { modelClass, isArray } = extractModelClassFromDecoratorInput(requestBodyWithModel.name, model);
-    const rds = container.get(import_js_repository_data_schema.RepositoryDataSchema);
+    const rds = container.get(import_ts_repository_data_schema.RepositoryDataSchema);
     const dataSchema = rds.getDataSchemaByModelClass(modelClass, ProjectionScope.INPUT, { skipDefaultValues: true, ...options });
     const res = isArray ? { type: import_ts_data_schema6.DataType.ARRAY, items: dataSchema } : dataSchema;
     if (typeof (options == null ? void 0 : options.required) === "boolean") {
@@ -1423,11 +1423,11 @@ __name(requestBodyWithModel, "requestBodyWithModel");
 // dist/esm/decorators/response-body-with-model.js
 var import_ts_data_schema7 = require("@e22m4u/ts-data-schema");
 var import_ts_rest_router2 = require("@e22m4u/ts-rest-router");
-var import_js_repository_data_schema2 = require("@e22m4u/js-repository-data-schema");
+var import_ts_repository_data_schema2 = require("@e22m4u/ts-repository-data-schema");
 function responseBodyWithModel(model, options) {
   return (0, import_ts_rest_router2.responseBody)((container) => {
     const { modelClass, isArray } = extractModelClassFromDecoratorInput(responseBodyWithModel.name, model);
-    const rds = container.get(import_js_repository_data_schema2.RepositoryDataSchema);
+    const rds = container.get(import_ts_repository_data_schema2.RepositoryDataSchema);
     const dataSchema = rds.getDataSchemaByModelClass(modelClass, ProjectionScope.OUTPUT, options);
     if (isArray)
       return { type: import_ts_data_schema7.DataType.ARRAY, items: dataSchema };
@@ -1437,7 +1437,7 @@ function responseBodyWithModel(model, options) {
 __name(responseBodyWithModel, "responseBodyWithModel");
 
 // dist/esm/index.js
-__reExport(index_exports, require("@e22m4u/js-repository-data-schema"), module.exports);
+__reExport(index_exports, require("@e22m4u/ts-repository-data-schema"), module.exports);
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   COUNT_RESULT_SCHEMA,
@@ -1447,7 +1447,7 @@ __reExport(index_exports, require("@e22m4u/js-repository-data-schema"), module.e
   WHERE_CLAUSE_SCHEMA,
   requestBodyWithModel,
   responseBodyWithModel,
-  ...require("@e22m4u/js-repository-data-schema")
+  ...require("@e22m4u/ts-repository-data-schema")
 });
 /*! Bundled license information:
 

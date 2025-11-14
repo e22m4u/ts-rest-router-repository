@@ -2,16 +2,21 @@
 import {expect} from 'chai';
 import {DataType} from '@e22m4u/ts-data-schema';
 import {ServiceContainer} from '@e22m4u/js-service';
-import {DatabaseSchema} from '@e22m4u/js-repository';
-import {model} from '@e22m4u/js-repository-decorators';
-import {DataSchemaFactory} from '@e22m4u/ts-rest-router';
-import {RequestDataMetadata} from '@e22m4u/ts-rest-router';
-import {property} from '@e22m4u/js-repository-decorators';
-import {RequestDataReflector} from '@e22m4u/ts-rest-router';
-import {DataType as RepDataType} from '@e22m4u/js-repository';
 import {requestBodyWithModel} from './request-body-with-model.js';
-import {RepositoryDataSchema} from '@e22m4u/js-repository-data-schema';
-import {getModelDefinitionFromClass} from '@e22m4u/js-repository-decorators';
+import {RepositoryDataSchema} from '@e22m4u/ts-repository-data-schema';
+
+import {
+  model,
+  property,
+  DatabaseSchema,
+  DataType as RepDataType,
+} from '@e22m4u/ts-repository';
+
+import {
+  DataSchemaFactory,
+  RequestDataMetadata,
+  RequestDataReflector,
+} from '@e22m4u/ts-rest-router';
 
 describe('requestBodyWithModel', function () {
   it('set DataSchema by model class', function () {
@@ -25,7 +30,7 @@ describe('requestBodyWithModel', function () {
       @property(RepDataType.NUMBER)
       prop2!: number;
     }
-    dbs.defineModel(getModelDefinitionFromClass(MyModel));
+    dbs.defineModelByClass(MyModel);
     class MyController {
       method(
         @requestBodyWithModel(MyModel)
@@ -57,7 +62,7 @@ describe('requestBodyWithModel', function () {
       @property({type: RepDataType.NUMBER, default: 10})
       prop2!: number;
     }
-    dbs.defineModel(getModelDefinitionFromClass(MyModel));
+    dbs.defineModelByClass(MyModel);
     class MyController {
       method(
         @requestBodyWithModel(MyModel)
@@ -90,7 +95,7 @@ describe('requestBodyWithModel', function () {
         @property({type: RepDataType.NUMBER, default: 10})
         prop2!: number;
       }
-      dbs.defineModel(getModelDefinitionFromClass(MyModel));
+      dbs.defineModelByClass(MyModel);
       class MyController {
         method(
           @requestBodyWithModel(MyModel, {skipDefaultValues: false})
@@ -117,7 +122,7 @@ describe('requestBodyWithModel', function () {
       container.use(RepositoryDataSchema);
       @model()
       class MyModel {}
-      dbs.defineModel(getModelDefinitionFromClass(MyModel));
+      dbs.defineModelByClass(MyModel);
       class MyController {
         method(
           @requestBodyWithModel(MyModel, {required: true})
