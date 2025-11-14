@@ -1,7 +1,6 @@
-import {ModelClass} from '../types.js';
 import {Errorf} from '@e22m4u/js-format';
 import {isClass} from '../../utils/index.js';
-import {DecoratorModelInput} from '../types.js';
+import {ModelClass, DecoratorModelInput} from '../types.js';
 
 /**
  * Результат извлечения модели из аргумента декоратора,

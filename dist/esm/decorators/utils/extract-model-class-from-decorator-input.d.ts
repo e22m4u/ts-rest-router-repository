@@ -1,5 +1,4 @@
-import { ModelClass } from '../types.js';
-import { DecoratorModelInput } from '../types.js';
+import { ModelClass, DecoratorModelInput } from '../types.js';
 /**
  * Результат извлечения модели из аргумента декоратора,
  * включая флаг массива (если это модель элемента массива).

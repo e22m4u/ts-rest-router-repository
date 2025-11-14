@@ -1,5 +1,4 @@
-import {DataType} from '@e22m4u/ts-data-schema';
-import {DataSchema} from '@e22m4u/ts-data-schema';
+import {DataType, DataSchema} from '@e22m4u/ts-data-schema';
 
 /**
  * Filter clause schema.
