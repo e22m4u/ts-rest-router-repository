@@ -1,11 +1,11 @@
 import {DataSchema} from '@e22m4u/ts-data-schema';
 
 /**
- * Data schema with open api options.
+ * Data schema with `oaDefault` option.
  */
-export type DataSchemaWithOaOptions = DataSchema & {
-  items?: DataSchemaWithOaOptions;
-  properties?: {[key: string]: DataSchemaWithOaOptions | undefined};
+export type DataSchemaWithOaDefault = DataSchema & {
+  items?: DataSchemaWithOaDefault;
+  properties?: {[key: string]: DataSchemaWithOaDefault | undefined};
   oaDefault?: DataSchema['default'];
 };
 
@@ -16,8 +16,8 @@ export type DataSchemaWithOaOptions = DataSchema & {
  */
 export function convertDsDefaultToOaDefault(
   dataSchema: DataSchema,
-): DataSchemaWithOaOptions {
-  const res = {...dataSchema} as DataSchemaWithOaOptions;
+): DataSchemaWithOaDefault {
+  const res = {...dataSchema} as DataSchemaWithOaDefault;
   if (res.default) {
     res.oaDefault = res.default;
     delete res.default;
