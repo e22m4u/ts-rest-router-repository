@@ -15,7 +15,6 @@ import {
   property,
   DatabaseSchema,
   DataType as RepDataType,
-  getModelDefinitionFromClass,
 } from '@e22m4u/ts-repository';
 
 describe('responseBodyWithModel', function () {
@@ -30,7 +29,7 @@ describe('responseBodyWithModel', function () {
       @property(RepDataType.NUMBER)
       prop2!: number;
     }
-    dbs.defineModel(getModelDefinitionFromClass(MyModel));
+    dbs.defineModelByClass(MyModel);
     class MyController {
       @responseBodyWithModel(MyModel)
       method() {}
@@ -49,7 +48,7 @@ describe('responseBodyWithModel', function () {
     });
   });
 
-  it('should use default values by default', function () {
+  it('should set the "default" option as "oaDefault"', function () {
     const container = new ServiceContainer();
     const dbs = container.get(DatabaseSchema);
     container.use(RepositoryDataSchema);
@@ -60,7 +59,7 @@ describe('responseBodyWithModel', function () {
       @property({type: RepDataType.NUMBER, default: 10})
       prop2!: number;
     }
-    dbs.defineModel(getModelDefinitionFromClass(MyModel));
+    dbs.defineModelByClass(MyModel);
     class MyController {
       @responseBodyWithModel(MyModel)
       method() {}
@@ -73,14 +72,14 @@ describe('responseBodyWithModel', function () {
     expect(res).to.be.eql({
       type: DataType.OBJECT,
       properties: {
-        prop1: {type: DataType.STRING, default: 'value'},
-        prop2: {type: DataType.NUMBER, default: 10},
+        prop1: {type: DataType.STRING, oaDefault: 'value'},
+        prop2: {type: DataType.NUMBER, oaDefault: 10},
       },
     });
   });
 
   describe('options', function () {
-    it('should use the given options to manager default values', function () {
+    it('should not convert the "default" option to "oaDefault" when the "applyDefaultValues" is true', function () {
       const container = new ServiceContainer();
       const dbs = container.get(DatabaseSchema);
       container.use(RepositoryDataSchema);
@@ -91,9 +90,9 @@ describe('responseBodyWithModel', function () {
         @property({type: RepDataType.NUMBER, default: 10})
         prop2!: number;
       }
-      dbs.defineModel(getModelDefinitionFromClass(MyModel));
+      dbs.defineModelByClass(MyModel);
       class MyController {
-        @responseBodyWithModel(MyModel, {skipDefaultValues: true})
+        @responseBodyWithModel(MyModel, {applyDefaultValues: true})
         method() {}
       }
       const mdMap = ResponseBodyReflector.getMetadata(MyController);
@@ -104,8 +103,8 @@ describe('responseBodyWithModel', function () {
       expect(res).to.be.eql({
         type: DataType.OBJECT,
         properties: {
-          prop1: {type: DataType.STRING},
-          prop2: {type: DataType.NUMBER},
+          prop1: {type: DataType.STRING, default: 'value'},
+          prop2: {type: DataType.NUMBER, default: 10},
         },
       });
     });

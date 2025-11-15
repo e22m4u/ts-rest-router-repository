@@ -4,7 +4,6 @@ import {extractModelClassFromDecoratorInput} from './extract-model-class-from-de
 class MyModel {}
 class AnotherModel {}
 
-// Основной блок тестов
 describe('extractModelClassFromDecoratorInput', function () {
   const decoratorName = 'testDecorator';
 

@@ -1,13 +1,12 @@
-import { Flatten } from '../types.js';
 import { DecoratorModelInput } from './types.js';
 import { requestBody } from '@e22m4u/ts-rest-router';
-import { DataSchemaOptions } from '@e22m4u/ts-repository-data-schema';
 /**
  * Request body with model options.
  */
-export type RequestBodyWithModelDecoratorOptions = Flatten<DataSchemaOptions & {
+export type RequestBodyWithModelDecoratorOptions = {
+    applyDefaultValues?: boolean;
     required?: boolean;
-}>;
+};
 /**
  * Декоратор-обертка для @requestBody, который позволяет передавать
  * первым аргументом модель (класс), массив с единственной моделью

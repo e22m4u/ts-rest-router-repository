@@ -2,12 +2,19 @@ import {DecoratorModelInput} from './types.js';
 import {DataType} from '@e22m4u/ts-data-schema';
 import {responseBody} from '@e22m4u/ts-rest-router';
 import {ProjectionScope} from '@e22m4u/ts-projection';
-import {extractModelClassFromDecoratorInput} from './utils/index.js';
+import {RepositoryDataSchema} from '@e22m4u/ts-repository-data-schema';
 
 import {
-  DataSchemaOptions,
-  RepositoryDataSchema,
-} from '@e22m4u/ts-repository-data-schema';
+  convertDefaultsToOaDefaults,
+  extractModelClassFromDecoratorInput,
+} from './utils/index.js';
+
+/**
+ * Response body with model options.
+ */
+export type ResponseBodyWithModelDecoratorOptions = {
+  applyDefaultValues?: boolean;
+};
 
 /**
  * Декоратор-обертка для @responseBody, который позволяет передавать
@@ -27,7 +34,7 @@ import {
  */
 export function responseBodyWithModel<T extends object>(
   model: DecoratorModelInput<T>,
-  options?: DataSchemaOptions,
+  options?: ResponseBodyWithModelDecoratorOptions,
 ): ReturnType<typeof responseBody> {
   return responseBody(container => {
     const {modelClass, isArray} = extractModelClassFromDecoratorInput(
@@ -35,11 +42,13 @@ export function responseBodyWithModel<T extends object>(
       model,
     );
     const rds = container.get(RepositoryDataSchema);
-    const dataSchema = rds.getDataSchemaByModelClass(
+    let dataSchema = rds.getDataSchemaByModelClass(
       modelClass,
       ProjectionScope.OUTPUT,
-      options,
     );
+    if (!options?.applyDefaultValues) {
+      dataSchema = convertDefaultsToOaDefaults(dataSchema);
+    }
     if (isArray) return {type: DataType.ARRAY, items: dataSchema};
     return dataSchema;
   });

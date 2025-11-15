@@ -52,7 +52,7 @@ npm install @e22m4u/ts-rest-router-repository
 ```js
 import {RestRouter} from '@e22m4u/ts-rest-router';
 import {ServiceContainer} from '@e22m4u/js-service';
-import {DatabaseSchema} from '@e22m4u/js-trie-router';
+import {DatabaseSchema} from '@e22m4u/ts-repository';
 
 const app = new ServiceContainer();
 // инъекция маршрутизатора и схемы баз данных
@@ -95,9 +95,17 @@ dbs.defineModelByClass(City);
 массив с единственной моделью (создает схему массива объектов указанной схемы),
 или фабрику возвращающую модель.
 
-Определение:
+Сигнатура:
 
 ```ts
+/**
+ * Опции декоратора `@requestBodyWithModel`.
+ */
+export type RequestBodyWithModelDecoratorOptions = {
+  applyDefaultValues?: boolean,
+  required?: boolean,
+};
+
 /**
  * Схема тела объекта:
  *   @requestBodyWithModel(MyModel)
@@ -108,10 +116,12 @@ dbs.defineModelByClass(City);
  *   @requestBodyWithModel(() => [MyModel])
  *
  * @param model
+ * @param options
  */
 function requestBodyWithModel<T extends object>(
-  model: DecoratorModelInput<T>
-): ReturnType<typeof requestBody>
+  model: DecoratorModelInput<T>,
+  options?: RequestBodyWithModelDecoratorOptions,
+): ReturnType<typeof requestBody>;
 ```
 
 Пример:
@@ -147,9 +157,16 @@ router.addController(CityController);
 массив с единственной моделью (создает схему массива объектов указанной схемы),
 или фабрику возвращающую модель.
 
-Определение:
+Сигнатура:
 
 ```ts
+/**
+ * Опции декоратора `@responseBodyWithModel`.
+ */
+type ResponseBodyWithModelDecoratorOptions = {
+  applyDefaultValues?: boolean;
+};
+
 /**
  * Схема тела объекта:
  *   @responseBodyWithModel(MyModel)
@@ -160,10 +177,12 @@ router.addController(CityController);
  *   @responseBodyWithModel(() => [MyModel])
  *
  * @param model
+ * @param options
  */
 function responseBodyWithModel<T extends object>(
-  model: DecoratorModelInput<T>
-): ReturnType<typeof responseBody>
+  model: DecoratorModelInput<T>,
+  options?: ResponseBodyWithModelDecoratorOptions,
+): ReturnType<typeof responseBody>;
 ```
 
 Пример:
@@ -441,6 +460,32 @@ export const INCLUDE_CLAUSE_SCHEMA: DataSchema = {
   default: () => [],
 };
 
+```
+
+Пример:
+
+```ts
+import {IncludeClause} from '@e22m4u/ts-repository';
+import {getAction, requestQuery, requestParam} from '@e22m4u/ts-rest-router';
+
+import {
+  responseBodyWithModel,
+  INCLUDE_CLAUSE_SCHEMA,
+} from '@e22m4u/ts-rest-router-repository';
+
+class UserController {
+  // получение пользователя с опциональным включением связанных данных
+  @getAction(':id')
+  @responseBodyWithModel(User)
+  async findUserById(
+    @requestParam('id') id: string,
+    @requestQuery('include', INCLUDE_CLAUSE_SCHEMA)
+    include?: IncludeClause,
+  ) {
+    // логика поиска пользователя с использованием `include`
+    // например, rep.findById(id, { include: include });
+  }
+}
 ```
 
 ## Тесты

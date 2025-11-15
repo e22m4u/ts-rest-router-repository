@@ -51,7 +51,7 @@ describe('requestBodyWithModel', function () {
     });
   });
 
-  it('should hide default values by default', function () {
+  it('should set the "default" option as "oaDefault"', function () {
     const container = new ServiceContainer();
     const dbs = container.get(DatabaseSchema);
     container.use(RepositoryDataSchema);
@@ -77,14 +77,14 @@ describe('requestBodyWithModel', function () {
     expect(res).to.be.eql({
       type: DataType.OBJECT,
       properties: {
-        prop1: {type: DataType.STRING},
-        prop2: {type: DataType.NUMBER},
+        prop1: {type: DataType.STRING, oaDefault: 'value'},
+        prop2: {type: DataType.NUMBER, oaDefault: 10},
       },
     });
   });
 
   describe('options', function () {
-    it('should use the given options to manager default values', function () {
+    it('should not convert the "default" option to "oaDefault" when the "applyDefaultValues" is true', function () {
       const container = new ServiceContainer();
       const dbs = container.get(DatabaseSchema);
       container.use(RepositoryDataSchema);
@@ -98,7 +98,7 @@ describe('requestBodyWithModel', function () {
       dbs.defineModelByClass(MyModel);
       class MyController {
         method(
-          @requestBodyWithModel(MyModel, {skipDefaultValues: false})
+          @requestBodyWithModel(MyModel, {applyDefaultValues: true})
           body?: unknown,
         ) {}
       }
@@ -116,7 +116,7 @@ describe('requestBodyWithModel', function () {
       });
     });
 
-    it('should allow to patch the "required" option in DataSchema', function () {
+    it('should patch the "required" option in DataSchema', function () {
       const container = new ServiceContainer();
       const dbs = container.get(DatabaseSchema);
       container.use(RepositoryDataSchema);
@@ -140,7 +140,6 @@ describe('requestBodyWithModel', function () {
       expect(factory2).to.be.a('function');
       const res1 = factory1(container);
       const res2 = factory2(container);
-      console.log(res1);
       expect(res1).to.be.eql({
         type: DataType.OBJECT,
         required: true,
