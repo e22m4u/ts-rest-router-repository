@@ -99,19 +99,32 @@ describe('requestBodyWithModel', function () {
       class MyController {
         method(
           @requestBodyWithModel(MyModel, {applyDefaultValues: true})
-          body?: unknown,
+          body1?: unknown,
+          @requestBodyWithModel(MyModel, {applyDefaultValues: false})
+          body2?: unknown,
         ) {}
       }
       const mdMap = RequestDataReflector.getMetadata(MyController, 'method');
-      const md = mdMap.get(0) as RequestDataMetadata;
-      const factory = md.schema as DataSchemaFactory;
-      expect(factory).to.be.a('function');
-      const res = factory(container);
-      expect(res).to.be.eql({
+      const md1 = mdMap.get(0) as RequestDataMetadata;
+      const md2 = mdMap.get(1) as RequestDataMetadata;
+      const factory1 = md1.schema as DataSchemaFactory;
+      const factory2 = md2.schema as DataSchemaFactory;
+      expect(factory1).to.be.a('function');
+      expect(factory2).to.be.a('function');
+      const res1 = factory1(container);
+      const res2 = factory2(container);
+      expect(res1).to.be.eql({
         type: DataType.OBJECT,
         properties: {
           prop1: {type: DataType.STRING, default: 'value'},
           prop2: {type: DataType.NUMBER, default: 10},
+        },
+      });
+      expect(res2).to.be.eql({
+        type: DataType.OBJECT,
+        properties: {
+          prop1: {type: DataType.STRING, oaDefault: 'value'},
+          prop2: {type: DataType.NUMBER, oaDefault: 10},
         },
       });
     });
@@ -150,7 +163,7 @@ describe('requestBodyWithModel', function () {
       });
     });
 
-    it('should skip the "required" options from model definition if the "partial" option is true', function () {
+    it('should skip the "required" options of model definition if the "partial" option is true', function () {
       const container = new ServiceContainer();
       const dbs = container.get(DatabaseSchema);
       container.use(RepositoryDataSchema);
@@ -194,6 +207,68 @@ describe('requestBodyWithModel', function () {
           prop: {
             type: DataType.STRING,
             required: true,
+          },
+        },
+      });
+    });
+
+    it('should not affect the default options behavior when the "partial" option is true', function () {
+      const container = new ServiceContainer();
+      const dbs = container.get(DatabaseSchema);
+      container.use(RepositoryDataSchema);
+      @model()
+      class MyModel {
+        @property({
+          type: RepDataType.STRING,
+          required: true,
+        })
+        prop1!: string;
+        @property({
+          type: RepDataType.STRING,
+          default: 'value',
+        })
+        prop2!: string;
+      }
+      dbs.defineModelByClass(MyModel);
+      class MyController {
+        method(
+          @requestBodyWithModel(MyModel, {partial: true})
+          body1?: unknown,
+          @requestBodyWithModel(MyModel, {partial: false})
+          body2?: unknown,
+        ) {}
+      }
+      const mdMap = RequestDataReflector.getMetadata(MyController, 'method');
+      const md1 = mdMap.get(0) as RequestDataMetadata;
+      const md2 = mdMap.get(1) as RequestDataMetadata;
+      const factory1 = md1.schema as DataSchemaFactory;
+      const factory2 = md2.schema as DataSchemaFactory;
+      expect(factory1).to.be.a('function');
+      expect(factory2).to.be.a('function');
+      const res1 = factory1(container);
+      const res2 = factory2(container);
+      expect(res1).to.be.eql({
+        type: DataType.OBJECT,
+        properties: {
+          prop1: {
+            type: DataType.STRING,
+          },
+          prop2: {
+            type: DataType.STRING,
+            oaDefault: 'value',
+          },
+        },
+      });
+      expect(res2).to.be.eql({
+        type: DataType.OBJECT,
+        properties: {
+          prop1: {
+            type: DataType.STRING,
+            required: true,
+          },
+          prop2: {
+            type: DataType.STRING,
+            oaDefault: 'value',
           },
         },
       });
