@@ -6,6 +6,7 @@ import { requestBody } from '@e22m4u/ts-rest-router';
 export type RequestBodyWithModelDecoratorOptions = {
     applyDefaultValues?: boolean;
     required?: boolean;
+    partial?: boolean;
 };
 /**
  * Декоратор-обертка для @requestBody, который позволяет передавать

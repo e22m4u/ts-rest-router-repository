@@ -102,8 +102,9 @@ dbs.defineModelByClass(City);
  * Опции декоратора `@requestBodyWithModel`.
  */
 export type RequestBodyWithModelDecoratorOptions = {
-  applyDefaultValues?: boolean,
-  required?: boolean,
+  applyDefaultValues?: boolean;
+  required?: boolean;
+  partial?: boolean;
 };
 
 /**
@@ -123,6 +124,20 @@ function requestBodyWithModel<T extends object>(
   options?: RequestBodyWithModelDecoratorOptions,
 ): ReturnType<typeof requestBody>;
 ```
+
+Параметры:
+
+- `applyDefaultValues: boolean` *(по умолчанию `false`)*  
+  Если `true`, автоматически подставляет значения по умолчанию указанные
+  в модели для свойств объекта, если значения не были переданы при запросе.
+
+- `required: boolean` *(по умолчанию `false`)*  
+  Если `true`, требует наличия объекта модели в теле запроса, в противном
+  случае выбрасывается ошибка.
+
+- `partial: boolean` *(по умолчанию `false`)*  
+  Если `true`, отключает проверку обязательных полей модели, позволяя
+  передавать только часть данных (полезно для *PATCH*-запросов).
 
 Пример:
 

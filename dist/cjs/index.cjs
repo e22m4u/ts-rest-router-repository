@@ -1434,7 +1434,11 @@ function requestBodyWithModel(model, options) {
   return (0, import_ts_rest_router.requestBody)((container) => {
     const { modelClass, isArray } = extractModelClassFromDecoratorInput(requestBodyWithModel.name, model);
     const rds = container.get(import_ts_repository_data_schema.RepositoryDataSchema);
-    let dataSchema = rds.getDataSchemaByModelClass(modelClass, ProjectionScope.INPUT);
+    const dataSchemaOptions = {};
+    if ((options == null ? void 0 : options.partial) === true) {
+      dataSchemaOptions.skipRequiredOptions = true;
+    }
+    let dataSchema = rds.getDataSchemaByModelClass(modelClass, ProjectionScope.INPUT, dataSchemaOptions);
     if (!(options == null ? void 0 : options.applyDefaultValues)) {
       dataSchema = convertDsDefaultToOaDefault(dataSchema);
     }

@@ -1,7 +1,7 @@
 import { DataType } from '@e22m4u/ts-data-schema';
 import { requestBody } from '@e22m4u/ts-rest-router';
 import { ProjectionScope } from '@e22m4u/ts-projection';
-import { RepositoryDataSchema } from '@e22m4u/ts-repository-data-schema';
+import { RepositoryDataSchema, } from '@e22m4u/ts-repository-data-schema';
 import { convertDsDefaultToOaDefault, extractModelClassFromDecoratorInput, } from './utils/index.js';
 /**
  * Декоратор-обертка для @requestBody, который позволяет передавать
@@ -23,7 +23,11 @@ export function requestBodyWithModel(model, options) {
     return requestBody(container => {
         const { modelClass, isArray } = extractModelClassFromDecoratorInput(requestBodyWithModel.name, model);
         const rds = container.get(RepositoryDataSchema);
-        let dataSchema = rds.getDataSchemaByModelClass(modelClass, ProjectionScope.INPUT);
+        const dataSchemaOptions = {};
+        if (options?.partial === true) {
+            dataSchemaOptions.skipRequiredOptions = true;
+        }
+        let dataSchema = rds.getDataSchemaByModelClass(modelClass, ProjectionScope.INPUT, dataSchemaOptions);
         if (!options?.applyDefaultValues) {
             dataSchema = convertDsDefaultToOaDefault(dataSchema);
         }
