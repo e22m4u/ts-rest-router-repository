@@ -41,7 +41,7 @@
   "dependencies": {
     "@e22m4u/js-format": "~0.2.1",
     "@e22m4u/ts-data-schema": "~0.4.9",
-    "@e22m4u/ts-repository-data-schema": "~0.3.3"
+    "@e22m4u/ts-repository-data-schema": "~0.3.4"
   },
   "peerDependencies": {
     "@e22m4u/ts-repository": "~0.2.0",
