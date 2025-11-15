@@ -2,11 +2,10 @@ import {DecoratorModelInput} from './types.js';
 import {DataType} from '@e22m4u/ts-data-schema';
 import {requestBody} from '@e22m4u/ts-rest-router';
 import {ProjectionScope} from '@e22m4u/ts-projection';
-
 import {RepositoryDataSchema} from '@e22m4u/ts-repository-data-schema';
 
 import {
-  convertDefaultsToOaDefaults,
+  convertDsDefaultToOaDefault,
   extractModelClassFromDecoratorInput,
 } from './utils/index.js';
 
@@ -49,7 +48,7 @@ export function requestBodyWithModel<T extends object>(
       ProjectionScope.INPUT,
     );
     if (!options?.applyDefaultValues) {
-      dataSchema = convertDefaultsToOaDefaults(dataSchema);
+      dataSchema = convertDsDefaultToOaDefault(dataSchema);
     }
     const res = isArray
       ? {type: DataType.ARRAY, items: dataSchema}

@@ -5,7 +5,7 @@ import {ProjectionScope} from '@e22m4u/ts-projection';
 import {RepositoryDataSchema} from '@e22m4u/ts-repository-data-schema';
 
 import {
-  convertDefaultsToOaDefaults,
+  convertDsDefaultToOaDefault,
   extractModelClassFromDecoratorInput,
 } from './utils/index.js';
 
@@ -47,7 +47,7 @@ export function responseBodyWithModel<T extends object>(
       ProjectionScope.OUTPUT,
     );
     if (!options?.applyDefaultValues) {
-      dataSchema = convertDefaultsToOaDefaults(dataSchema);
+      dataSchema = convertDsDefaultToOaDefault(dataSchema);
     }
     if (isArray) return {type: DataType.ARRAY, items: dataSchema};
     return dataSchema;

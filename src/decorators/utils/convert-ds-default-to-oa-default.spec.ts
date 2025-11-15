@@ -1,10 +1,10 @@
 import {expect} from 'chai';
 import {DataType} from '@e22m4u/ts-data-schema';
-import {convertDefaultsToOaDefaults} from './convert-defaults-to-oa-defaults.js';
+import {convertDsDefaultToOaDefault} from './convert-ds-default-to-oa-default.js';
 
-describe('convertDefaultsToOaDefaults', function () {
+describe('convertDsDefaultToOaDefault', function () {
   it('should convert the "default" to "oaDefault" in root', function () {
-    const res = convertDefaultsToOaDefaults({
+    const res = convertDsDefaultToOaDefault({
       type: DataType.STRING,
       default: 'value',
     });
@@ -15,7 +15,7 @@ describe('convertDefaultsToOaDefaults', function () {
   });
 
   it('should convert the "default" to "oaDefault" in items', function () {
-    const res = convertDefaultsToOaDefaults({
+    const res = convertDsDefaultToOaDefault({
       type: DataType.ARRAY,
       items: {
         type: DataType.STRING,
@@ -32,7 +32,7 @@ describe('convertDefaultsToOaDefaults', function () {
   });
 
   it('should convert the "default" to "oaDefault" in properties', function () {
-    const res = convertDefaultsToOaDefaults({
+    const res = convertDsDefaultToOaDefault({
       type: DataType.OBJECT,
       properties: {
         foo: {
@@ -61,7 +61,7 @@ describe('convertDefaultsToOaDefaults', function () {
   });
 
   it('should convert the "default" to "oaDefault" in properties with recursion', function () {
-    const res = convertDefaultsToOaDefaults({
+    const res = convertDsDefaultToOaDefault({
       type: DataType.OBJECT,
       properties: {
         foo: {

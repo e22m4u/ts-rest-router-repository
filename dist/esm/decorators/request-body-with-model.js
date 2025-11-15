@@ -2,7 +2,7 @@ import { DataType } from '@e22m4u/ts-data-schema';
 import { requestBody } from '@e22m4u/ts-rest-router';
 import { ProjectionScope } from '@e22m4u/ts-projection';
 import { RepositoryDataSchema } from '@e22m4u/ts-repository-data-schema';
-import { convertDefaultsToOaDefaults, extractModelClassFromDecoratorInput, } from './utils/index.js';
+import { convertDsDefaultToOaDefault, extractModelClassFromDecoratorInput, } from './utils/index.js';
 /**
  * Декоратор-обертка для @requestBody, который позволяет передавать
  * первым аргументом модель (класс), массив с единственной моделью
@@ -25,7 +25,7 @@ export function requestBodyWithModel(model, options) {
         const rds = container.get(RepositoryDataSchema);
         let dataSchema = rds.getDataSchemaByModelClass(modelClass, ProjectionScope.INPUT);
         if (!options?.applyDefaultValues) {
-            dataSchema = convertDefaultsToOaDefaults(dataSchema);
+            dataSchema = convertDsDefaultToOaDefault(dataSchema);
         }
         const res = isArray
             ? { type: DataType.ARRAY, items: dataSchema }

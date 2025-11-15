@@ -1373,27 +1373,27 @@ var EMBEDDED_PROJECTION_PROPERTY_METADATA_KEY = new MetadataKey("embeddedProject
 // dist/esm/decorators/request-body-with-model.js
 var import_ts_repository_data_schema = require("@e22m4u/ts-repository-data-schema");
 
-// dist/esm/decorators/utils/convert-defaults-to-oa-defaults.js
-function convertDefaultsToOaDefaults(dataSchema) {
+// dist/esm/decorators/utils/convert-ds-default-to-oa-default.js
+function convertDsDefaultToOaDefault(dataSchema) {
   const res = { ...dataSchema };
   if (res.default) {
     res.oaDefault = res.default;
     delete res.default;
   }
   if (res.items) {
-    res.items = convertDefaultsToOaDefaults(res.items);
+    res.items = convertDsDefaultToOaDefault(res.items);
   }
   if (res.properties) {
     for (const propName in res.properties) {
       const propValue = res.properties[propName];
       if (propValue) {
-        res.properties[propName] = convertDefaultsToOaDefaults(propValue);
+        res.properties[propName] = convertDsDefaultToOaDefault(propValue);
       }
     }
   }
   return res;
 }
-__name(convertDefaultsToOaDefaults, "convertDefaultsToOaDefaults");
+__name(convertDsDefaultToOaDefault, "convertDsDefaultToOaDefault");
 
 // dist/esm/decorators/utils/extract-model-class-from-decorator-input.js
 var import_js_format = require("@e22m4u/js-format");
@@ -1436,7 +1436,7 @@ function requestBodyWithModel(model, options) {
     const rds = container.get(import_ts_repository_data_schema.RepositoryDataSchema);
     let dataSchema = rds.getDataSchemaByModelClass(modelClass, ProjectionScope.INPUT);
     if (!(options == null ? void 0 : options.applyDefaultValues)) {
-      dataSchema = convertDefaultsToOaDefaults(dataSchema);
+      dataSchema = convertDsDefaultToOaDefault(dataSchema);
     }
     const res = isArray ? { type: import_ts_data_schema6.DataType.ARRAY, items: dataSchema } : dataSchema;
     if (typeof (options == null ? void 0 : options.required) === "boolean") {
@@ -1457,7 +1457,7 @@ function responseBodyWithModel(model, options) {
     const rds = container.get(import_ts_repository_data_schema2.RepositoryDataSchema);
     let dataSchema = rds.getDataSchemaByModelClass(modelClass, ProjectionScope.OUTPUT);
     if (!(options == null ? void 0 : options.applyDefaultValues)) {
-      dataSchema = convertDefaultsToOaDefaults(dataSchema);
+      dataSchema = convertDsDefaultToOaDefault(dataSchema);
     }
     if (isArray)
       return { type: import_ts_data_schema7.DataType.ARRAY, items: dataSchema };
